@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surah Challenge</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Lateef&display=swap');
+
+        body {
+            font-family: 'Amiri', serif;
+            background: linear-gradient(to bottom, #f0f4f8, #d9e2ec);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin: 20px;
+            max-width: 800px;
+            width: 95%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            right: -50px;
+            bottom: -50px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgODAwIDYwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8ZGVmcz4KICAgIDxwYXR0ZXJuIGlkPSJnb2xkZW5QYXR0ZXJuIiB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPgogICAgICA8cGF0aCBkPSJNIDAgMCBMIDIwIDIwIE0gMjAgMCBMIDAgMjAiIHN0cm9rZT0iI2ZmZDA2NiIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgICA8L3BhdHRlcm4+CiAgPC9kZWZzPgogIDxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ29sZGVuQ29sb3IpIiBvcGFjaXR5PSIwLjEiLz4KPC9zdmc+') repeat;
+            opacity: 0.1;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+
+        h1, h2 {
+            color: #004080;
+            font-family: 'Lateef', cursive;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            font-family: 'Amiri', serif;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        .button:active {
+            transform: scale(0.98);
+        }
+
+        .button.secondary {
+            background-color: #6c757d;
+        }
+
+        .button.secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .button.success {
+            background-color: #28a745;
+        }
+
+        .button.success:hover {
+            background-color: #218838;
+        }
+
+        .button.danger {
+            background-color: #dc3545;
+        }
+
+        .button.danger:hover {
+            background-color: #c82333;
+        }
+
+        #game-area {
+            margin-top: 20px;
+        }
+
+        #clues {
+            margin-bottom: 20px;
+            text-align: left;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        #clues h3 {
+            margin-top: 0;
+            color: #004080;
+        }
+
+        #clues ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #clues li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        #options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            background-color: #e9ecef;
+            color: #495057;
+            border: 1px solid #ced4da;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+            font-family: 'Amiri', serif;
+        }
+
+        .option-button:hover {
+            background-color: #dee2e6;
+            border-color: #adb5bd;
+        }
+
+        .option-button.selected {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        #feedback {
+            margin-top: 20px;
+            font-weight: bold;
+            min-height: 1.5em;
+        }
+
+        .correct {
+            color: #28a745;
+        }
+
+        .incorrect {
+            color: #dc3545;
+        }
+
+        #score-area {
+            margin-top: 20px;
+            font-size: 1.1em;
+            color: #004080;
+        }
+
+        #progress-area {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        #learn-mode {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        #learn-mode select {
+            padding: 8px;
+            margin-right: 10px;
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+            font-family: 'Amiri', serif;
+        }
+
+        #learn-mode-content {
+            margin-top: 15px;
+            border: 1px solid #eee;
+            padding: 15px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+        }
+
+        #learn-mode-content h4 {
+            margin-top: 0;
+            color: #004080;
+        }
+
+        #learn-mode-content p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        #backup-restore-area {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        #backup-restore-area input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            background-color: #17a2b8;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s ease;
+            font-family: 'Amiri', serif;
+            display: inline-block;
+            margin: 5px;
+        }
+
+        .file-upload-label:hover {
+            background-color: #138496;
+        }
+
+        #data-load-status {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .loading {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+            }
+
+            .option-button {
+                padding: 8px;
+                font-size: 0.9em;
+            }
+
+            #options {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content">
+            <h1>Surah Challenge</h1>
+            <div id="data-load-status">Loading Quran data... <span class="loading">⚙️</span></div>
+
+            <div id="main-menu" style="display: none;">
+                <button class="button" id="start-game-btn">Start Game</button>
+                <button class="button secondary" id="learn-mode-btn">Learn Mode</button>
+                <button class="button secondary" id="backup-restore-btn">Backup/Restore</button>
+            </div>
+
+            <div id="game-area" style="display: none;">
+                <h2>Identify the Surah</h2>
+                <div id="clues">
+                    <h3>Clues:</h3>
+                    <ul id="clue-list">
+                        <!-- Clues will be loaded here -->
+                    </ul>
+                </div>
+                <div id="options">
+                    <!-- Surah options will be loaded here -->
+                </div>
+                <button class="button secondary" id="hint-btn">Hint</button>
+                <button class="button danger" id="quit-game-btn">Quit Game</button>
+                <div id="feedback"></div>
+                <div id="score-area">Score: <span id="score">0</span></div>
+                <div id="progress-area">Correctly Identified: <span id="correct-count">0</span> / 114</div>
+            </div>
+
+            <div id="learn-mode" style="display: none;">
+                <h2>Learn About Surahs</h2>
+                <select id="surah-select"></select>
+                <div id="learn-mode-content">
+                    <h4>Select a Surah to learn more.</h4>
+                    <!-- Surah info will be loaded here -->
+                </div>
+                <button class="button secondary" id="back-to-menu-from-learn">Back to Menu</button>
+            </div>
+
+            <div id="backup-restore-area" style="display: none;">
+                <h2>Backup and Restore Progress</h2>
+                <button class="button success" id="backup-btn">Backup Progress</button>
+                <label for="restore-file" class="file-upload-label">Restore Progress</label>
+                <input type="file" id="restore-file" accept=".json">
+                <p>Backup saves your score and correctly identified Surahs.</p>
+                <button class="button secondary" id="back-to-menu-from-backup">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const DB_NAME = 'SurahChallengeDB';
+        const DB_VERSION = 1;
+        const STORE_SURAH_DATA = 'surahData';
+        const STORE_USER_PROGRESS = 'userProgress';
+
+        let db;
+        let allSurahData = []; // Array of objects { surahNumber: '001', ayahs: [...] }
+        let surahInfo = {}; // Object { '001': { name: 'Al-Fatiha', englishName: 'The Opening', revelationPlace: 'Makkah', ayahCount: 7, ... }, ... }
+        let userProgress = {
+            score: 0,
+            correctlyIdentified: [], // Array of surah numbers (e.g., ['001', '002'])
+            learnedSurahs: [] // Array of surah numbers user has viewed in learn mode
+        };
+
+        let currentGame = {
+            currentSurahNumber: null,
+            options: [],
+            cluesUsed: 0,
+            hintCount: 0
+        };
+
+        const surahNames = [
+            { num: '001', arabic: 'الفاتحة', english: 'Al-Fatiha', urdu: 'فاتحہ', revelation: 'Makkah', ayahs: 7 },
+            { num: '002', arabic: 'البقرة', english: 'Al-Baqarah', urdu: 'بقرہ', revelation: 'Madinah', ayahs: 286 },
+            { num: '003', arabic: 'آل عمران', english: 'Al-Imran', urdu: 'آل عمران', revelation: 'Madinah', ayahs: 200 },
+            { num: '004', arabic: 'النساء', english: 'An-Nisa', urdu: 'نساء', revelation: 'Madinah', ayahs: 176 },
+            { num: '005', arabic: 'المائدة', english: 'Al-Maidah', urdu: 'مائدہ', revelation: 'Madinah', ayahs: 120 },
+            { num: '006', arabic: 'الأنعام', english: 'Al-An\'am', urdu: 'انعام', revelation: 'Makkah', ayahs: 165 },
+            { num: '007', arabic: 'الأعراف', english: 'Al-A\'raf', urdu: 'اعراف', revelation: 'Makkah', ayahs: 206 },
+            { num: '008', arabic: 'الأنفال', english: 'Al-Anfal', urdu: 'انفال', revelation: 'Madinah', ayahs: 75 },
+            { num: '009', arabic: 'التوبة', english: 'At-Tawbah', urdu: 'توبہ', revelation: 'Madinah', ayahs: 129 },
+            { num: '010', arabic: 'يونس', english: 'Yunus', urdu: 'یونس', revelation: 'Makkah', ayahs: 109 },
+            { num: '011', arabic: 'هود', english: 'Hud', urdu: 'ہود', revelation: 'Makkah', ayahs: 123 },
+            { num: '012', arabic: 'يوسف', english: 'Yusuf', urdu: 'یوسف', revelation: 'Makkah', ayahs: 111 },
+            { num: '013', arabic: 'الرعد', english: 'Ar-Ra\'d', urdu: 'رعد', revelation: 'Madinah', ayahs: 43 },
+            { num: '014', arabic: 'ابراهيم', english: 'Ibrahim', urdu: 'ابراہیم', revelation: 'Makkah', ayahs: 52 },
+            { num: '015', arabic: 'الحجر', english: 'Al-Hijr', urdu: 'حجر', revelation: 'Makkah', ayahs: 99 },
+            { num: '016', arabic: 'النحل', english: 'An-Nahl', urdu: 'نحل', revelation: 'Makkah', ayahs: 128 },
+            { num: '017', arabic: 'الإسراء', english: 'Al-Isra', urdu: 'اسراء', revelation: 'Makkah', ayahs: 111 },
+            { num: '018', arabic: 'الكهف', english: 'Al-Kahf', urdu: 'کہف', revelation: 'Makkah', ayahs: 110 },
+            { num: '019', arabic: 'مريم', english: 'Maryam', urdu: 'مریم', revelation: 'Makkah', ayahs: 98 },
+            { num: '020', arabic: 'طه', english: 'Taha', urdu: 'طٰہٰ', revelation: 'Makkah', ayahs: 135 },
+            { num: '021', arabic: 'الأنبياء', english: 'Al-Anbiya', urdu: 'انبیاء', revelation: 'Makkah', ayahs: 112 },
+            { num: '022', arabic: 'الحج', english: 'Al-Hajj', urdu: 'حج', revelation: 'Madinah', ayahs: 78 },
+            { num: '023', arabic: 'المؤمنون', english: 'Al-Mu\'minun', urdu: 'مومنون', revelation: 'Makkah', ayahs: 118 },
+            { num: '024', arabic: 'النور', english: 'An-Nur', urdu: 'نور', revelation: 'Madinah', ayahs: 64 },
+            { num: '025', arabic: 'الفرقان', english: 'Al-Furqan', urdu: 'فرقان', revelation: 'Makkah', ayahs: 77 },
+            { num: '026', arabic: 'الشعراء', english: 'Ash-Shu\'ara', urdu: 'شعراء', revelation: 'Makkah', ayahs: 227 },
+            { num: '027', arabic: 'النمل', english: 'An-Naml', urdu: 'نمل', revelation: 'Makkah', ayahs: 93 },
+            { num: '028', arabic: 'القصص', english: 'Al-Qasas', urdu: 'قصص', revelation: 'Makkah', ayahs: 88 },
+            { num: '029', arabic: 'العنكبوت', english: 'Al-Ankabut', urdu: 'عنکبوت', revelation: 'Makkah', ayahs: 69 },
+            { num: '030', arabic: 'الروم', english: 'Ar-Rum', urdu: 'روم', revelation: 'Makkah', ayahs: 60 },
+            { num: '031', arabic: 'لقمان', english: 'Luqman', urdu: 'لقمان', revelation: 'Makkah', ayahs: 34 },
+            { num: '032', arabic: 'السجدة', english: 'As-Sajdah', urdu: 'سجدہ', revelation: 'Makkah', ayahs: 30 },
+            { num: '033', arabic: 'الأحزاب', english: 'Al-Ahzab', urdu: 'احزاب', revelation: 'Madinah', ayahs: 73 },
+            { num: '034', arabic: 'سبإ', english: 'Saba', urdu: 'سبا', revelation: 'Makkah', ayahs: 54 },
+            { num: '035', arabic: 'فاطر', english: 'Fatir', urdu: 'فاطر', revelation: 'Makkah', ayahs: 45 },
+            { num: '036', arabic: 'يس', english: 'Ya-Sin', urdu: 'یٰس', revelation: 'Makkah', ayahs: 83 },
+            { num: '037', arabic: 'الصافات', english: 'As-Saffat', urdu: 'صافات', revelation: 'Makkah', ayahs: 182 },
+            { num: '038', arabic: 'ص', english: 'Sad', urdu: 'ص', revelation: 'Makkah', ayahs: 88 },
+            { num: '039', arabic: 'الزمر', english: 'Az-Zumar', urdu: 'زمر', revelation: 'Makkah', ayahs: 75 },
+            { num: '040', arabic: 'غافر', english: 'Ghafir', urdu: 'غافر', revelation: 'Makkah', ayahs: 85 },
+            { num: '041', arabic: 'فصلت', english: 'Fussilat', urdu: 'فصلت', revelation: 'Makkah', ayahs: 54 },
+            { num: '042', arabic: 'الشورى', english: 'Ash-Shuraa', urdu: 'شوریٰ', revelation: 'Makkah', ayahs: 53 },
+            { num: '043', arabic: 'الزخرف', english: 'Az-Zukhruf', urdu: 'زخرف', revelation: 'Makkah', ayahs: 89 },
+            { num: '044', arabic: 'الدخان', english: 'Ad-Dukhan', urdu: 'دخان', revelation: 'Makkah', ayahs: 59 },
+            { num: '045', arabic: 'الجاثية', english: 'Al-Jathiyah', urdu: 'جاثیہ', revelation: 'Makkah', ayahs: 37 },
+            { num: '046', arabic: 'الأحقاف', english: 'Al-Ahqaf', urdu: 'احقاف', revelation: 'Makkah', ayahs: 35 },
+            { num: '047', arabic: 'محمد', english: 'Muhammad', urdu: 'محمد', revelation: 'Madinah', ayahs: 38 },
+            { num: '048', arabic: 'الفتح', english: 'Al-Fath', urdu: 'فتح', revelation: 'Madinah', ayahs: 29 },
+            { num: '049', arabic: 'الحجرات', english: 'Al-Hujurat', urdu: 'حجرات', revelation: 'Madinah', ayahs: 18 },
+            { num: '050', arabic: 'ق', english: 'Qaf', urdu: 'ق', revelation: 'Makkah', ayahs: 45 },
+            { num: '051', arabic: 'الذاريات', english: 'Adh-Dhariyat', urdu: 'ذاریات', revelation: 'Makkah', ayahs: 60 },
+            { num: '052', arabic: 'الطور', english: 'At-Tur', urdu: 'طور', revelation: 'Makkah', ayahs: 49 },
+            { num: '053', arabic: 'النجم', english: 'An-Najm', urdu: 'نجم', revelation: 'Makkah', ayahs: 62 },
+            { num: '054', arabic: 'القمر', english: 'Al-Qamar', urdu: 'قمر', revelation: 'Makkah', ayahs: 55 },
+            { num: '055', arabic: 'الرحمن', english: 'Ar-Rahman', urdu: 'رحمن', revelation: 'Madinah', ayahs: 78 },
+            { num: '056', arabic: 'الواقعة', english: 'Al-Waqi\'ah', urdu: 'واقعہ', revelation: 'Makkah', ayahs: 96 },
+            { num: '057', arabic: 'الحديد', english: 'Al-Hadid', urdu: 'حدید', revelation: 'Madinah', ayahs: 29 },
+            { num: '058', arabic: 'المجادلة', english: 'Al-Mujadila', urdu: 'مجادلہ', revelation: 'Madinah', ayahs: 22 },
+            { num: '059', arabic: 'الحشر', english: 'Al-Hashr', urdu: 'حشر', revelation: 'Madinah', ayahs: 24 },
+            { num: '060', arabic: 'الممتحنة', english: 'Al-Mumtahanah', urdu: 'ممتحنہ', revelation: 'Madinah', ayahs: 13 },
+            { num: '061', arabic: 'الصف', english: 'As-Saff', urdu: 'صف', revelation: 'Madinah', ayahs: 14 },
+            { num: '062', arabic: 'الجمعة', english: 'Al-Jumu\'ah', urdu: 'جمعہ', revelation: 'Madinah', ayahs: 11 },
+            { num: '063', arabic: 'المنافقون', english: 'Al-Munafiqun', urdu: 'منافقون', revelation: 'Madinah', ayahs: 11 },
+            { num: '064', arabic: 'التغابن', english: 'At-Taghabun', urdu: 'تغابن', revelation: 'Madinah', ayahs: 18 },
+            { num: '065', arabic: 'الطلاق', english: 'At-Talaq', urdu: 'طلاق', revelation: 'Madinah', ayahs: 12 },
+            { num: '066', arabic: 'التحريم', english: 'At-Tahrim', urdu: 'تحریم', revelation: 'Madinah', ayahs: 12 },
+            { num: '067', arabic: 'الملك', english: 'Al-Mulk', urdu: 'ملک', revelation: 'Makkah', ayahs: 30 },
+            { num: '068', arabic: 'القلم', english: 'Al-Qalam', urdu: 'قلم', revelation: 'Makkah', ayahs: 52 },
+            { num: '069', arabic: 'الحاقة', english: 'Al-Haqqah', urdu: 'حاقہ', revelation: 'Makkah', ayahs: 52 },
+            { num: '070', arabic: 'المعارج', english: 'Al-Ma\'arij', urdu: 'معارج', revelation: 'Makkah', ayahs: 44 },
+            { num: '071', arabic: 'نوح', english: 'Nuh', urdu: 'نوح', revelation: 'Makkah', ayahs: 28 },
+            { num: '072', arabic: 'الجن', english: 'Al-Jinn', urdu: 'جن', revelation: 'Makkah', ayahs: 28 },
+            { num: '073', arabic: 'المزمل', english: 'Al-Muzzammil', urdu: 'مزمل', revelation: 'Makkah', ayahs: 20 },
+            { num: '074', arabic: 'المدثر', english: 'Al-Muddaththir', urdu: 'مدثر', revelation: 'Makkah', ayahs: 56 },
+            { num: '075', arabic: 'القيامة', english: 'Al-Qiyamah', urdu: 'قیامہ', revelation: 'Makkah', ayahs: 40 },
+            { num: '076', arabic: 'الإنسان', english: 'Al-Insan', urdu: 'انسان', revelation: 'Madinah', ayahs: 31 },
+            { num: '077', arabic: 'المرسلات', english: 'Al-Mursalat', urdu: 'مرسلات', revelation: 'Makkah', ayahs: 50 },
+            { num: '078', arabic: 'النبإ', english: 'An-Naba', urdu: 'نباء', revelation: 'Makkah', ayahs: 40 },
+            { num: '079', arabic: 'النازعات', english: 'An-Nazi\'at', urdu: 'نازعات', revelation: 'Makkah', ayahs: 46 },
+            { num: '080', arabic: 'عبس', english: '\'Abasa', urdu: 'عبس', revelation: 'Makkah', ayahs: 42 },
+            { num: '081', arabic: 'التكوير', english: 'At-Takwir', urdu: 'تکویر', revelation: 'Makkah', ayahs: 29 },
+            { num: '082', arabic: 'الإنفطار', english: 'Al-Infitar', urdu: 'انفطار', revelation: 'Makkah', ayahs: 19 },
+            { num: '083', arabic: 'المطففين', english: 'Al-Mutaffifin', urdu: 'مطففین', revelation: 'Makkah', ayahs: 36 },
+            { num: '084', arabic: 'الإنشقاق', english: 'Al-Inshiqaq', urdu: 'انشقاق', revelation: 'Makkah', ayahs: 25 },
+            { num: '085', arabic: 'البروج', english: 'Al-Buruj', urdu: 'بروج', revelation: 'Makkah', ayahs: 22 },
+            { num: '086', english: 'At-Tariq', arabic: 'الطارق', urdu: 'طارق', revelation: 'Makkah', ayahs: 17 },
+            { num: '087', english: 'Al-A\'la', arabic: 'الأعلى', urdu: 'اعلیٰ', revelation: 'Makkah', ayahs: 19 },
+            { num: '088', english: 'Al-Ghashiyah', arabic: 'الغاشية', urdu: 'غاشیہ', revelation: 'Makkah', ayahs: 26 },
+            { num: '089', english: 'Al-Fajr', arabic: 'الفجر', urdu: 'فجر', revelation: 'Makkah', ayahs: 30 },
+            { num: '090', english: 'Al-Balad', arabic: 'البلد', urdu: 'بلد', revelation: 'Makkah', ayahs: 20 },
+            { num: '091', english: 'Ash-Shams', arabic: 'الشمس', urdu: 'شمس', revelation: 'Makkah', ayahs: 15 },
+            { num: '092', english: 'Al-Layl', arabic: 'الليل', urdu: 'لیل', revelation: 'Makkah', ayahs: 21 },
+            { num: '093', english: 'Ad-Duhaa', arabic: 'الضحى', urdu: 'ضحیٰ', revelation: 'Makkah', ayahs: 11 },
+            { num: '094', english: 'Ash-Sharh', arabic: 'الشرح', urdu: 'شرح', revelation: 'Makkah', ayahs: 8 },
+            { num: '095', english: 'At-Tin', arabic: 'التين', urdu: 'تین', revelation: 'Makkah', ayahs: 8 },
+            { num: '096', english: 'Al-\'Alaq', arabic: 'العلق', urdu: 'علق', revelation: 'Makkah', ayahs: 19 },
+            { num: '097', english: 'Al-Qadr', arabic: 'القدر', urdu: 'قدر', revelation: 'Makkah', ayahs: 5 },
+            { num: '098', english: 'Al-Bayyinah', arabic: 'البينة', urdu: 'بینہ', revelation: 'Madinah', ayahs: 8 },
+            { num: '099', english: 'Az-Zalzalah', arabic: 'الزلزلة', urdu: 'زلزال', revelation: 'Madinah', ayahs: 8 },
+            { num: '100', english: 'Al-\'Adiyat', arabic: 'العاديات', urdu: 'عادیات', revelation: 'Makkah', ayahs: 11 },
+            { num: '101', english: 'Al-Qari\'ah', arabic: 'القارعة', urdu: 'قارعہ', revelation: 'Makkah', ayahs: 11 },
+            { num: '102', english: 'At-Takathur', arabic: 'التكاثر', urdu: 'تکاثر', revelation: 'Makkah', ayahs: 8 },
+            { num: '103', english: 'Al-\'Asr', arabic: 'العصر', urdu: 'عصر', revelation: 'Makkah', ayahs: 3 },
+            { num: '104', english: 'Al-Humazah', arabic: 'الهمزة', urdu: 'ہمزہ', revelation: 'Makkah', ayahs: 9 },
+            { num: '105', english: 'Al-Fil', arabic: 'الفيل', urdu: 'فیل', revelation: 'Makkah', ayahs: 5 },
+            { num: '106', english: 'Quraysh', arabic: 'قريش', urdu: 'قریش', revelation: 'Makkah', ayahs: 4 },
+            { num: '107', english: 'Al-Ma\'un', arabic: 'الماعون', urdu: 'ماعون', revelation: 'Makkah', ayahs: 7 },
+            { num: '108', english: 'Al-Kawthar', arabic: 'الكوثر', urdu: 'کوثر', revelation: 'Makkah', ayahs: 3 },
+            { num: '109', english: 'Al-Kafirun', arabic: 'الكافرون', urdu: 'کافرون', revelation: 'Makkah', ayahs: 6 },
+            { num: '110', english: 'An-Nasr', arabic: 'النصر', urdu: 'نصر', revelation: 'Madinah', ayahs: 3 },
+            { num: '111', english: 'Al-Masad', arabic: 'المسد', urdu: 'مسد', revelation: 'Makkah', ayahs: 5 },
+            { num: '112', english: 'Al-Ikhlas', arabic: 'الإخلاص', urdu: 'اخلاص', revelation: 'Makkah', ayahs: 4 },
+            { num: '113', english: 'Al-Falaq', arabic: 'الفلق', urdu: 'فلق', revelation: 'Makkah', ayahs: 5 },
+            { num: '114', english: 'An-Nas', arabic: 'الناس', urdu: 'ناس', revelation: 'Makkah', ayahs: 6 }
+        ];
+
+        // --- IndexedDB Functions ---
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+                request.onupgradeneeded = (event) => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(STORE_SURAH_DATA)) {
+                        db.createObjectStore(STORE_SURAH_DATA, { keyPath: 'surahNumber' });
+                    }
+                    if (!db.objectStoreNames.contains(STORE_USER_PROGRESS)) {
+                        db.createObjectStore(STORE_USER_PROGRESS, { keyPath: 'id' });
+                    }
+                };
+
+                request.onsuccess = (event) => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+
+                request.onerror = (event) => {
+                    console.error('IndexedDB error:', event.target.errorCode);
+                    reject(event.target.error);
+                };
+            });
+        }
+
+        function saveData(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readwrite');
+                const store = transaction.objectStore(storeName);
+                const request = store.put(data);
+
+                request.onsuccess = () => resolve();
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        function getData(storeName, key) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.get(key);
+
+                request.onsuccess = (event) => resolve(event.target.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        function getAllData(storeName) {
+            return new Promise((resolve, reject) => {
+                const transaction = db.transaction([storeName], 'readonly');
+                const store = transaction.objectStore(storeName);
+                const request = store.getAll();
+
+                request.onsuccess = (event) => resolve(event.target.result);
+                request.onerror = (event) => reject(event.target.error);
+            });
+        }
+
+        // --- Data Loading and Parsing ---
+
+        async function loadQuranData() {
+            const statusElement = document.getElementById('data-load-status');
+            statusElement.innerHTML = 'Loading Quran data... <span class="loading">⚙️</span>';
+
+            try {
+                // Try loading from IndexedDB first
+                const storedData = await getAllData(STORE_SURAH_DATA);
+                if (storedData && storedData.length === 114) {
+                    allSurahData = storedData;
+                    console.log('Quran data loaded from IndexedDB.');
+                    statusElement.textContent = 'Quran data loaded.';
+                    initializeSurahInfo();
+                    await loadUserProgress();
+                    showMainMenu();
+                    return;
+                }
+
+                // If not in IndexedDB, fetch from file
+                const response = await fetch('data.AM');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const text = await response.text();
+                parseQuranData(text);
+
+                // Save to IndexedDB
+                const transaction = db.transaction([STORE_SURAH_DATA], 'readwrite');
+                const store = transaction.objectStore(STORE_SURAH_DATA);
+                allSurahData.forEach(surah => store.put(surah));
+
+                transaction.oncomplete = async () => {
+                    console.log('Quran data parsed and saved to IndexedDB.');
+                    statusElement.textContent = 'Quran data loaded.';
+                    initializeSurahInfo();
+                    await loadUserProgress();
+                    showMainMenu();
+                };
+                transaction.onerror = (event) => {
+                    console.error('Error saving Quran data to IndexedDB:', event.target.error);
+                    statusElement.textContent = 'Error saving data. Game may not function correctly.';
+                    initializeSurahInfo(); // Still try to initialize with parsed data
+                    loadUserProgress(); // Still try to load user progress
+                    showMainMenu();
+                };
+
+            } catch (error) {
+                console.error('Error loading or parsing Quran data:', error);
+                document.getElementById('data-load-status').textContent = 'Error loading Quran data. Please ensure data.AM is available.';
+            }
+        }
+
+        function parseQuranData(text) {
+            const lines = text.split('\n');
+            let currentSurah = null;
+            let currentAyahs = [];
+
+            lines.forEach(line => {
+                const match = line.match(/(.*) ترجمہ: (.*)<br\/>س (\d{3}) آ (\d{3})/);
+                if (match) {
+                    const arabic = match[1].trim();
+                    const urdu = match[2].trim();
+                    const surahNum = match[3];
+                    const ayahNum = parseInt(match[4], 10);
+
+                    if (currentSurah !== surahNum) {
+                        if (currentSurah !== null) {
+                            allSurahData.push({ surahNumber: currentSurah, ayahs: currentAyahs });
+                        }
+                        currentSurah = surahNum;
+                        currentAyahs = [];
+                    }
+                    currentAyahs.push({ ayahNumber: ayahNum, arabic: arabic, urdu: urdu });
+                }
+            });
+
+            // Push the last surah
+            if (currentSurah !== null) {
+                allSurahData.push({ surahNumber: currentSurah, ayahs: currentAyahs });
+            }
+
+            // Sort surahs by number
+            allSurahData.sort((a, b) => parseInt(a.surahNumber, 10) - parseInt(b.surahNumber, 10));
+        }
+
+        function initializeSurahInfo() {
+            surahNames.forEach(info => {
+                surahInfo[info.num] = info;
+            });
+            console.log('Surah info initialized.');
+        }
+
+        // --- User Progress Management ---
+
+        async function loadUserProgress() {
+            try {
+                const progress = await getData(STORE_USER_PROGRESS, 'userProgress');
+                if (progress) {
+                    userProgress = progress;
+                    console.log('User progress loaded:', userProgress);
+                } else {
+                    console.log('No user progress found. Starting fresh.');
+                }
+                updateProgressDisplay();
+            } catch (error) {
+                console.error('Error loading user progress:', error);
+            }
+        }
+
+        async function saveUserProgress() {
+            try {
+                await saveData(STORE_USER_PROGRESS, { id: 'userProgress', ...userProgress });
+                console.log('User progress saved.');
+            } catch (error) {
+                console.error('Error saving user progress:', error);
+            }
+        }
+
+        function updateProgressDisplay() {
+            document.getElementById('score').textContent = userProgress.score;
+            document.getElementById('correct-count').textContent = userProgress.correctlyIdentified.length;
+        }
+
+        // --- Game Logic ---
+
+        function showMainMenu() {
+            document.getElementById('data-load-status').style.display = 'none';
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('learn-mode').style.display = 'none';
+            document.getElementById('backup-restore-area').style.display = 'none';
+            document.getElementById('main-menu').style.display = 'block';
+        }
+
+        function showGameArea() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('learn-mode').style.display = 'none';
+            document.getElementById('backup-restore-area').style.display = 'none';
+            document.getElementById('game-area').style.display = 'block';
+            startNewGame();
+        }
+
+        function showLearnMode() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('backup-restore-area').style.display = 'none';
+            document.getElementById('learn-mode').style.display = 'block';
+            populateSurahSelect();
+            displaySurahInfo('001'); // Display info for the first surah by default
+        }
+
+        function showBackupRestore() {
+            document.getElementById('main-menu').style.display = 'none';
+            document.getElementById('game-area').style.display = 'none';
+            document.getElementById('learn-mode').style.display = 'none';
+            document.getElementById('backup-restore-area').style.display = 'block';
+        }
+
+        function startNewGame() {
+            if (allSurahData.length === 0) {
+                document.getElementById('feedback').textContent = 'Quran data not loaded. Cannot start game.';
+                return;
+            }
+
+            const availableSurahs = allSurahData.filter(s => !userProgress.correctlyIdentified.includes(s.surahNumber));
+
+            if (availableSurahs.length === 0) {
+                document.getElementById('feedback').textContent = 'Congratulations! You have identified all Surahs!';
+                document.getElementById('clue-list').innerHTML = '';
+                document.getElementById('options').innerHTML = '';
+                document.getElementById('hint-btn').style.display = 'none';
+                return;
+            }
+
+            const targetSurahData = availableSurahs[Math.floor(Math.random() * availableSurahs.length)];
+            currentGame.currentSurahNumber = targetSurahData.surahNumber;
+            currentGame.cluesUsed = 0;
+            currentGame.hintCount = 0;
+
+            generateClues(targetSurahData);
+            generateOptions(targetSurahData.surahNumber);
+            document.getElementById('feedback').textContent = '';
+            document.getElementById('hint-btn').style.display = 'inline-block';
+        }
+
+        function generateClues(surahData) {
+            const clueListElement = document.getElementById('clue-list');
+            clueListElement.innerHTML = ''; // Clear previous clues
+
+            const surahNum = surahData.surahNumber;
+            const info = surahInfo[surahNum];
+            const ayahs = surahData.ayahs;
+
+            // Clue 1: Revelation Place
+            clueListElement.innerHTML += `<li><strong>Revelation:</strong> ${info.revelation}</li>`;
+
+            // Clue 2: Number of Ayahs
+            clueListElement.innerHTML += `<li><strong>Ayah Count:</strong> ${info.ayahs}</li>`;
+
+            // Clue 3: A few key Ayahs (randomly selected)
+            const numAyahClues = Math.min(2, ayahs.length); // Show up to 2 ayahs
+            const shuffledAyahs = ayahs.sort(() => 0.5 - Math.random());
+            for (let i = 0; i < numAyahClues; i++) {
+                clueListElement.innerHTML += `<li><strong>Ayah ${shuffledAyahs[i].ayahNumber}:</strong> ${shuffledAyahs[i].arabic}</li>`;
+            }
+
+            // Clue 4: A distinctive word (simple approach: pick a word from a random ayah)
+            if (ayahs.length > 0) {
+                 const randomAyah = ayahs[Math.floor(Math.random() * ayahs.length)];
+                 const words = randomAyah.arabic.split(/\s+/).filter(word => word.length > 2); // Filter short words
+                 if (words.length > 0) {
+                     const randomWord = words[Math.floor(Math.random() * words.length)];
+                     clueListElement.innerHTML += `<li><strong>Distinctive Word:</strong> ${randomWord}</li>`;
+                 }
+            }
+
+            currentGame.cluesUsed = 4; // Initial clues
+        }
+
+        function addHint() {
+             if (currentGame.hintCount >= 2) { // Limit hints
+                 document.getElementById('feedback').textContent = 'No more hints available for this Surah.';
+                 return;
+             }
+
+             const surahData = allSurahData.find(s => s.surahNumber === currentGame.currentSurahNumber);
+             if (!surahData) return;
+
+             const clueListElement = document.getElementById('clue-list');
+             const ayahs = surahData.ayahs;
+
+             if (currentGame.hintCount === 0 && ayahs.length > 0) {
+                 // Hint 1: Another random Ayah
+                 const shuffledAyahs = ayahs.sort(() => 0.5 - Math.random());
+                 const newAyah = shuffledAyahs.find(a => !clueListElement.innerHTML.includes(`Ayah ${a.ayahNumber}`));
+                 if (newAyah) {
+                     clueListElement.innerHTML += `<li><strong>Hint Ayah ${newAyah.ayahNumber}:</strong> ${newAyah.arabic}</li>`;
+                     currentGame.hintCount++;
+                     document.getElementById('feedback').textContent = 'Hint added!';
+                 } else {
+                     document.getElementById('feedback').textContent = 'Could not find another unique Ayah hint.';
+                 }
+             } else if (currentGame.hintCount === 1 && ayahs.length > 0) {
+                 // Hint 2: Urdu translation of a key Ayah
+                 const shuffledAyahs = ayahs.sort(() => 0.5 - Math.random());
+                 const newAyah = shuffledAyahs.find(a => !clueListElement.innerHTML.includes(`Ayah ${a.ayahNumber}`));
+                 if (newAyah) {
+                     clueListElement.innerHTML += `<li><strong>Hint Urdu Translation (Ayah ${newAyah.ayahNumber}):</strong> ${newAyah.urdu}</li>`;
+                     currentGame.hintCount++;
+                     document.getElementById('feedback').textContent = 'Hint added!';
+                 } else {
+                      document.getElementById('feedback').textContent = 'Could not find another unique Ayah hint.';
+                 }
+             } else {
+                 document.getElementById('feedback').textContent = 'No more hints available for this Surah.';
+             }
+        }
+
+
+        function generateOptions(correctSurahNum) {
+            const optionsElement = document.getElementById('options');
+            optionsElement.innerHTML = ''; // Clear previous options
+
+            const correctSurah = surahInfo[correctSurahNum];
+            let options = [correctSurah];
+
+            // Select 3 random incorrect Surahs
+            const incorrectSurahs = surahNames.filter(s => s.num !== correctSurahNum);
+            const shuffledIncorrect = incorrectSurahs.sort(() => 0.5 - Math.random());
+            options = options.concat(shuffledIncorrect.slice(0, 3));
+
+            // Shuffle the options
+            options.sort(() => 0.5 - Math.random());
+
+            currentGame.options = options;
+
+            options.forEach(surah => {
+                const button = document.createElement('button');
+                button.classList.add('option-button');
+                button.textContent = `${surah.num}. ${surah.english} (${surah.urdu})`;
+                button.dataset.surahNum = surah.num;
+                button.addEventListener('click', handleGuess);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function handleGuess(event) {
+            const guessedSurahNum = event.target.dataset.surahNum;
+            const feedbackElement = document.getElementById('feedback');
+            const optionsButtons = document.querySelectorAll('.option-button');
+
+            // Disable buttons after guess
+            optionsButtons.forEach(button => button.disabled = true);
+            document.getElementById('hint-btn').disabled = true;
+
+            if (guessedSurahNum === currentGame.currentSurahNumber) {
+                feedbackElement.textContent = 'Correct! 🎉';
+                feedbackElement.className = 'correct';
+                userProgress.score += (10 - currentGame.hintCount * 2); // Score based on hints used
+                if (!userProgress.correctlyIdentified.includes(currentGame.currentSurahNumber)) {
+                    userProgress.correctlyIdentified.push(currentGame.currentSurahNumber);
+                }
+                saveUserProgress();
+                updateProgressDisplay();
+                setTimeout(startNewGame, 2000); // Start a new game after 2 seconds
+            } else {
+                feedbackElement.textContent = `Incorrect. The correct Surah was ${surahInfo[currentGame.currentSurahNumber].english} (${surahInfo[currentGame.currentSurahNumber].urdu}).`;
+                feedbackElement.className = 'incorrect';
+                // Highlight the correct answer
+                optionsButtons.forEach(button => {
+                    if (button.dataset.surahNum === currentGame.currentSurahNumber) {
+                        button.classList.add('success');
+                    }
+                });
+                setTimeout(startNewGame, 3000); // Start a new game after 3 seconds
+            }
+        }
+
+        function populateSurahSelect() {
+            const selectElement = document.getElementById('surah-select');
+            selectElement.innerHTML = ''; // Clear previous options
+            surahNames.forEach(surah => {
+                const option = document.createElement('option');
+                option.value = surah.num;
+                option.textContent = `${surah.num}. ${surah.english} (${surah.urdu})`;
+                selectElement.appendChild(option);
+            });
+            selectElement.addEventListener('change', (event) => {
+                displaySurahInfo(event.target.value);
+            });
+        }
+
+        function displaySurahInfo(surahNum) {
+            const infoElement = document.getElementById('learn-mode-content');
+            const surah = surahInfo[surahNum];
+            const surahData = allSurahData.find(s => s.surahNumber === surahNum);
+
+            if (!surah || !surahData) {
+                infoElement.innerHTML = '<h4>Surah information not available.</h4>';
+                return;
+            }
+
+            let content = `<h4>${surah.num}. ${surah.english} (${surah.urdu})</h4>`;
+            content += `<p><strong>Arabic Name:</strong> ${surah.arabic}</p>`;
+            content += `<p><strong>Revelation Place:</strong> ${surah.revelation}</p>`;
+            content += `<p><strong>Number of Ayahs:</strong> ${surah.ayahs}</p>`;
+
+            // Add some Ayahs from the Surah
+            const ayahsToShow = Math.min(5, surahData.ayahs.length);
+            content += `<h5>First ${ayahsToShow} Ayahs:</h5>`;
+            for (let i = 0; i < ayahsToShow; i++) {
+                content += `<p><strong>${surahData.ayahs[i].ayahNumber}.</strong> ${surahData.ayahs[i].arabic}<br/><em>${surahData.ayahs[i].urdu}</em></p>`;
+            }
+
+            infoElement.innerHTML = content;
+
+            // Mark as learned (conceptual integration)
+            if (!userProgress.learnedSurahs.includes(surahNum)) {
+                userProgress.learnedSurahs.push(surahNum);
+                saveUserProgress();
+            }
+        }
+
+        // --- Backup/Restore ---
+
+        async function backupProgress() {
+            try {
+                const progressData = await getData(STORE_USER_PROGRESS, 'userProgress');
+                if (!progressData) {
+                    alert('No progress data to backup.');
+                    return;
+                }
+                const dataStr = JSON.stringify(progressData, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'surah_challenge_progress.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert('Progress backed up successfully!');
+            } catch (error) {
+                console.error('Backup failed:', error);
+                alert('Failed to backup progress.');
+            }
+        }
+
+        function restoreProgress(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const restoredData = JSON.parse(e.target.result);
+                    // Basic validation
+                    if (restoredData && typeof restoredData.score === 'number' && Array.isArray(restoredData.correctlyIdentified) && Array.isArray(restoredData.learnedSurahs)) {
+                        // Ensure surah numbers are strings (consistent format)
+                        restoredData.correctlyIdentified = restoredData.correctlyIdentified.map(String);
+                        restoredData.learnedSurahs = restoredData.learnedSurahs.map(String);
+
+                        await saveData(STORE_USER_PROGRESS, { id: 'userProgress', ...restoredData });
+                        userProgress = { id: 'userProgress', ...restoredData }; // Update in-memory state
+                        updateProgressDisplay();
+                        alert('Progress restored successfully!');
+                        showMainMenu(); // Go back to menu after restore
+                    } else {
+                        throw new Error('Invalid file format.');
+                    }
+                } catch (error) {
+                    console.error('Restore failed:', error);
+                    alert('Failed to restore progress. Please ensure the file is a valid backup.');
+                }
+            };
+            reader.onerror = (error) => {
+                console.error('File reading error:', error);
+                alert('Error reading file.');
+            };
+            reader.readAsText(file);
+        }
+
+
+        // --- Event Listeners ---
+
+        document.getElementById('start-game-btn').addEventListener('click', showGameArea);
+        document.getElementById('learn-mode-btn').addEventListener('click', showLearnMode);
+        document.getElementById('backup-restore-btn').addEventListener('click', showBackupRestore);
+        document.getElementById('quit-game-btn').addEventListener('click', showMainMenu);
+        document.getElementById('back-to-menu-from-learn').addEventListener('click', showMainMenu);
+        document.getElementById('back-to-menu-from-backup').addEventListener('click', showMainMenu);
+        document.getElementById('hint-btn').addEventListener('click', addHint);
+        document.getElementById('backup-btn').addEventListener('click', backupProgress);
+        document.getElementById('restore-file').addEventListener('change', restoreProgress);
+
+
+        // --- Initialization ---
+
+        async function init() {
+            try {
+                await openDB();
+                await loadQuranData(); // This will also load user progress and show the main menu
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                document.getElementById('data-load-status').textContent = 'Failed to initialize the app. Please check console for details.';
+            }
+        }
+
+        init();
+
+    </script>
+</body>
+</html>

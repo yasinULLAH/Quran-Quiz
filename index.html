@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Surah Challenge - By Yasin Ullah</title>
+    <style>
+        :root {
+            --bg-color: #0a192f; /* Deep navy */
+            --primary-text-color: #ccd6f6; /* Light blue-gray */
+            --secondary-text-color: #8892b0; /* Slate gray */
+            --accent-color: #64ffda; /* Bright teal/mint */
+            --highlight-color: #ffc107; /* Gold */
+            --card-bg-color: #112240; /* Slightly lighter navy */
+            --border-color: #233554; /* Darker slate */
+            --font-sans: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-arabic: 'Noto Naskh Arabic', 'Amiri', 'Times New Roman', serif;
+            --futuristic-glow: 0 0 5px var(--accent-color), 0 0 10px var(--accent-color), 0 0 15px var(--accent-color);
+            --futuristic-glow-gold: 0 0 5px var(--highlight-color), 0 0 10px var(--highlight-color);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-size: 16px;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--card-bg-color);
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--accent-color);
+        }
+
+        header h1 {
+            color: var(--accent-color);
+            font-size: 2.5em;
+            margin: 0;
+            text-shadow: var(--futuristic-glow);
+        }
+
+        header p {
+            color: var(--secondary-text-color);
+            font-size: 0.9em;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        nav button {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, color 0.3s, box-shadow 0.3s;
+        }
+
+        nav button:hover, nav button.active {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            box-shadow: var(--futuristic-glow);
+        }
+
+        .view {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .game-area, .learn-mode-area, .settings-area, .progress-area {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            background-color: rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            color: var(--highlight-color);
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .clue-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 5px;
+            border-left: 3px solid var(--highlight-color);
+        }
+
+        .clue-container p {
+            margin: 8px 0;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .clue-container p.arabic-clue {
+            font-family: var(--font-arabic);
+            font-size: 1.5em;
+            direction: rtl;
+            text-align: right;
+            color: var(--primary-text-color);
+        }
+        .clue-container p.urdu-clue {
+            font-family: var(--font-arabic); /* Often same font for Urdu */
+            font-size: 1.3em;
+            direction: rtl;
+            text-align: right;
+            color: var(--primary-text-color);
+        }
+
+        .answer-options button, .action-buttons button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background-color: var(--primary-text-color);
+            color: var(--bg-color);
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .answer-options button:hover {
+            background-color: var(--highlight-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .action-buttons button {
+            flex-grow: 1;
+        }
+        #hintButton {
+            background-color: var(--secondary-text-color);
+            color: var(--primary-text-color);
+        }
+        #hintButton:hover {
+            background-color: var(--highlight-color);
+            color: var(--bg-color);
+        }
+        #submitGuessButton { /* For type-in */
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+        }
+        #submitGuessButton:hover {
+            background-color: var(--highlight-color);
+        }
+
+        #guessInput {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            font-size: 1em;
+        }
+
+        .score-board {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: var(--highlight-color);
+        }
+
+        .learn-surah-list {
+            list-style: none;
+            padding: 0;
+        }
+        .learn-surah-list li {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: rgba(255,255,255,0.05);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .learn-surah-list li:hover {
+            background-color: rgba(100, 255, 218, 0.2); /* Accent color transparent */
+        }
+        .learn-surah-list li .surah-name-ar {
+            font-family: var(--font-arabic);
+            font-size: 1.3em;
+        }
+        .learn-surah-list li .correctly-identified-check {
+            color: var(--accent-color);
+            font-size: 1.2em;
+        }
+
+        .surah-detail-view {
+            padding: 15px;
+            background-color: var(--card-bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .surah-detail-view h3 {
+            color: var(--accent-color);
+            text-align: center;
+        }
+        .surah-detail-view .arabic-name {
+            font-family: var(--font-arabic);
+            font-size: 2em;
+            text-align: center;
+            color: var(--highlight-color);
+        }
+        .surah-detail-view p {
+            margin: 5px 0;
+        }
+        .ayah-display {
+            margin-top: 15px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: rgba(0,0,0,0.15);
+            border-radius: 4px;
+        }
+        .ayah-item {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .ayah-item .arabic-text {
+            font-family: var(--font-arabic);
+            font-size: 1.6em;
+            direction: rtl;
+            text-align: right;
+            margin-bottom: 5px;
+        }
+        .ayah-item .urdu-text {
+            font-family: var(--font-arabic);
+            font-size: 1.2em;
+            direction: rtl;
+            text-align: right;
+            color: var(--secondary-text-color);
+        }
+
+        .settings-group {
+            margin-bottom: 20px;
+        }
+        .settings-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--secondary-text-color);
+        }
+        .settings-group select, .settings-group input[type="file"], .settings-group button {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--primary-text-color);
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+        .settings-group button {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            cursor: pointer;
+        }
+        .settings-group button:hover {
+            background-color: var(--highlight-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: var(--card-bg-color);
+            margin: auto;
+            padding: 30px;
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0.5);
+        }
+        .modal-content p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        .modal-content button {
+            background-color: var(--accent-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 5px;
+        }
+        .modal-content button.cancel {
+            background-color: var(--secondary-text-color);
+            color: var(--primary-text-color);
+        }
+        .loader {
+            border: 5px solid var(--border-color);
+            border-top: 5px solid var(--accent-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            margin-top: auto;
+            color: var(--secondary-text-color);
+            font-size: 0.9em;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            nav {
+                gap: 10px;
+            }
+            nav button {
+                padding: 8px 15px;
+                font-size: 0.9em;
+            }
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        @media (max-width: 480px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            nav button {
+                padding: 8px 10px;
+                font-size: 0.8em;
+                width: calc(50% - 10px); /* Two buttons per row */
+            }
+            .clue-container p.arabic-clue {
+                font-size: 1.3em;
+            }
+            .clue-container p.urdu-clue {
+                font-size: 1.1em;
+            }
+            .ayah-item .arabic-text {
+                font-size: 1.4em;
+            }
+            .ayah-item .urdu-text {
+                font-size: 1.1em;
+            }
+        }
+
+        /* Progress bar for data loading */
+        #dataLoadProgressContainer {
+            width: 100%;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none; /* Hidden by default */
+        }
+        #dataLoadProgressBar {
+            width: 0%;
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 5px;
+            text-align: center;
+            line-height: 10px; /* For text if any */
+            color: var(--bg-color);
+            font-size: 0.7em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Surah Challenge</h1>
+            <p>By Yasin Ullah (Pakistani)</p>
+        </header>
+
+        <nav>
+            <button id="navGame" data-view="gameView">Play Game</button>
+            <button id="navLearn" data-view="learnView">Learn Mode</button>
+            <button id="navProgress" data-view="progressView">Progress</button>
+            <button id="navSettings" data-view="settingsView">Settings & Backup</button>
+        </nav>
+
+        <!-- Game View -->
+        <div id="gameView" class="view">
+            <h2>Identify the Surah</h2>
+            <div class="score-board">Score: <span id="scoreDisplay">0</span></div>
+            <div id="clueDisplay" class="clue-container">
+                <p>Loading clues...</p>
+            </div>
+            <div id="answerOptions" class="answer-options">
+                <!-- Options will be populated here -->
+            </div>
+            <input type="text" id="guessInput" list="surahNameDatalist" placeholder="Type Surah name (e.g., Al-Fatiha)" style="display:none;">
+            <datalist id="surahNameDatalist"></datalist>
+            
+            <div class="action-buttons">
+                <button id="hintButton">Get a Hint (<span id="hintsRemaining">3</span>)</button>
+                <button id="submitGuessButton" style="display:none;">Submit Guess</button> <!-- For type-in mode -->
+                <button id="nextQuestionButton" style="display:none;">Next Question</button>
+            </div>
+            <p id="feedbackMessage" style="text-align:center; margin-top:15px; font-weight:bold;"></p>
+        </div>
+
+        <!-- Learn Mode View -->
+        <div id="learnView" class="view">
+            <h2>Learn About Surahs</h2>
+            <input type="text" id="learnSearchInput" placeholder="Search Surahs..." style="width: calc(100% - 24px); padding: 10px; margin-bottom: 15px; background-color: var(--bg-color); color: var(--primary-text-color); border: 1px solid var(--border-color); border-radius: 5px;">
+            <ul id="learnSurahList" class="learn-surah-list">
+                <!-- Surah list will be populated here -->
+            </ul>
+            <div id="learnSurahDetailView" class="surah-detail-view" style="display:none;">
+                <button id="backToLearnListButton" style="margin-bottom:10px; background-color: var(--secondary-text-color); color: var(--primary-text-color); border:none; padding: 8px 15px; border-radius:5px; cursor:pointer;">← Back to List</button>
+                <h3 id="detailSurahNameEn"></h3>
+                <p id="detailSurahNameAr" class="arabic-name"></p>
+                <p><strong>Number:</strong> <span id="detailSurahNumber"></span></p>
+                <p><strong>Ayahs:</strong> <span id="detailSurahAyahs"></span></p>
+                <p><strong>Revelation:</strong> <span id="detailSurahRevelation"></span></p>
+                <p><strong>Juz:</strong> <span id="detailSurahJuz"></span></p>
+                <div id="detailSurahAyahsDisplay" class="ayah-display">
+                    <!-- Ayahs will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress View -->
+        <div id="progressView" class="view">
+            <h2>Your Progress</h2>
+            <p><strong>Total Score:</strong> <span id="progressScoreDisplay">0</span></p>
+            <p><strong>Surahs Correctly Identified:</strong> <span id="progressCorrectCount">0</span> / 114</p>
+            <h3>Identified Surahs:</h3>
+            <ul id="identifiedSurahsList" class="learn-surah-list" style="max-height: 400px; overflow-y:auto;">
+                <!-- List of identified Surahs -->
+            </ul>
+        </div>
+
+        <!-- Settings & Backup View -->
+        <div id="settingsView" class="view">
+            <h2>Settings & Data Management</h2>
+            <div class="settings-group">
+                <label for="difficultyLevel">Difficulty Level:</label>
+                <select id="difficultyLevel">
+                    <option value="easy">Easy (Facts & MCQ)</option>
+                    <option value="medium">Medium (Ayah Clues & MCQ)</option>
+                    <option value="hard">Hard (Varied Clues & Type-in)</option>
+                </select>
+            </div>
+            <div class="settings-group">
+                <label for="questionMode">Question Mode:</label>
+                <select id="questionMode">
+                    <option value="mcq">Multiple Choice</option>
+                    <option value="typein">Type-in (from list)</option>
+                </select>
+            </div>
+            <div class="settings-group">
+                <button id="resetProgressButton">Reset All Progress</button>
+                <small style="display:block; margin-top:-5px; margin-bottom:10px; color:var(--secondary-text-color);">This will reset your score and identified Surahs, but not the Quran data.</small>
+            </div>
+            <div class="settings-group">
+                <h3>Backup & Restore</h3>
+                <button id="backupDataButton">Backup My Data</button>
+                <label for="restoreDataInput" style="margin-top:15px;">Restore Data from Backup:</label>
+                <input type="file" id="restoreDataInput" accept=".json">
+                <button id="restoreDataButton">Restore Data</button>
+            </div>
+             <div class="settings-group">
+                <h3>Quran Data (data.AM)</h3>
+                <p id="dataAmStatus">Status: Checking...</p>
+                <button id="reloadDataAmButton">Re-process data.AM File</button>
+                <input type="file" id="dataAmFileInput" accept=".AM" style="display:none;">
+                <div id="dataLoadProgressContainer">
+                    <div id="dataLoadProgressBar"></div>
+                </div>
+                <small style="display:block; margin-top:5px; color:var(--secondary-text-color);">If data.AM is updated, you can re-process it. You might need to select the file if auto-load fails.</small>
+            </div>
+        </div>
+
+    </div> <!-- end .container -->
+
+    <footer>
+        <p>© 2024 Surah Challenge - Yasin Ullah. All Rights Reserved.</p>
+        <p>An offline Quranic quiz game for educational purposes.</p>
+    </footer>
+
+    <!-- Modal for notifications and confirmations -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <p id="modalMessage">Message goes here.</p>
+            <div id="modalButtons">
+                <button id="modalOkButton">OK</button>
+                <!-- Optional Cancel button can be added here by JS -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Loading Overlay for initial data load -->
+    <div id="loadingOverlay" class="modal" style="display: flex;">
+        <div class="modal-content">
+            <p id="loadingMessage">Initializing Surah Challenge...</p>
+            <div class="loader"></div>
+            <p>Please wait. This may take a moment on first run.</p>
+            <div id="initialDataLoadProgressContainer" style="width: 100%; background-color: var(--border-color); border-radius: 5px; margin-top: 10px;">
+                <div id="initialDataLoadProgressBar" style="width: 0%; height: 15px; background-color: var(--accent-color); border-radius: 5px; text-align: center; line-height: 15px; color: var(--bg-color); font-size: 0.8em;"></div>
+            </div>
+            <button id="manualDataAmLoadButton" style="display:none; margin-top:15px;">Load data.AM File Manually</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Constants and Configuration ---
+        const DB_NAME = "SurahChallengeDB";
+        const DB_VERSION = 1;
+        const AYAH_STORE = "quranAyahs";
+        const SURAH_METADATA_STORE = "surahMetadata";
+        const USER_PROGRESS_STORE = "userProgress";
+        const APP_STATE_STORE = "appState"; // For data version, etc.
+        const DATA_AM_PROCESSED_KEY = "dataAmProcessedVersion";
+        const CURRENT_DATA_VERSION = "1.1"; // Increment if data.AM parsing logic or surahData changes significantly
+
+        // --- DOM Elements ---
+        const views = {
+            game: document.getElementById('gameView'),
+            learn: document.getElementById('learnView'),
+            progress: document.getElementById('progressView'),
+            settings: document.getElementById('settingsView'),
+        };
+        const navButtons = {
+            game: document.getElementById('navGame'),
+            learn: document.getElementById('navLearn'),
+            progress: document.getElementById('navProgress'),
+            settings: document.getElementById('navSettings'),
+        };
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const loadingMessage = document.getElementById('loadingMessage');
+        const initialDataLoadProgressBar = document.getElementById('initialDataLoadProgressBar');
+        const manualDataAmLoadButton = document.getElementById('manualDataAmLoadButton');
+        
+        const clueDisplay = document.getElementById('clueDisplay');
+        const answerOptionsContainer = document.getElementById('answerOptions');
+        const guessInput = document.getElementById('guessInput');
+        const surahNameDatalist = document.getElementById('surahNameDatalist');
+        const hintButton = document.getElementById('hintButton');
+        const hintsRemainingDisplay = document.getElementById('hintsRemaining');
+        const submitGuessButton = document.getElementById('submitGuessButton');
+        const nextQuestionButton = document.getElementById('nextQuestionButton');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        
+        const learnSurahList = document.getElementById('learnSurahList');
+        const learnSearchInput = document.getElementById('learnSearchInput');
+        const learnSurahDetailView = document.getElementById('learnSurahDetailView');
+        const backToLearnListButton = document.getElementById('backToLearnListButton');
+        
+        const difficultyLevelSelect = document.getElementById('difficultyLevel');
+        const questionModeSelect = document.getElementById('questionMode');
+        const resetProgressButton = document.getElementById('resetProgressButton');
+        const backupDataButton = document.getElementById('backupDataButton');
+        const restoreDataInput = document.getElementById('restoreDataInput');
+        const restoreDataButton = document.getElementById('restoreDataButton');
+        const dataAmStatus = document.getElementById('dataAmStatus');
+        const reloadDataAmButton = document.getElementById('reloadDataAmButton');
+        const dataAmFileInput = document.getElementById('dataAmFileInput');
+        const dataLoadProgressContainer = document.getElementById('dataLoadProgressContainer');
+        const dataLoadProgressBar = document.getElementById('dataLoadProgressBar');
+
+        const progressScoreDisplay = document.getElementById('progressScoreDisplay');
+        const progressCorrectCount = document.getElementById('progressCorrectCount');
+        const identifiedSurahsList = document.getElementById('identifiedSurahsList');
+
+        const notificationModal = document.getElementById('notificationModal');
+        const modalMessage = document.getElementById('modalMessage');
+        const modalButtons = document.getElementById('modalButtons');
+        const modalOkButton = document.getElementById('modalOkButton');
+
+        // --- Global State ---
+        let db;
+        let currentQuestion = null;
+        let score = 0;
+        let hintsLeft = 3;
+        let difficulty = 'easy'; // easy, medium, hard
+        let questionType = 'mcq'; // mcq, typein
+        let correctlyIdentifiedSurahs = []; // Array of Surah IDs
+        let allSurahMetadata = []; // Loaded from DB
+
+        // --- Predefined Surah Data (Source of Truth for Metadata) ---
+        // This data is crucial and should be accurate.
+        const surahMasterData = [
+            { id: 1, nameAr: "ٱلْفَاتِحَة", nameEn: "Al-Fatiha", nameUr: "الفاتحة", ayahs: 7, revelationPlace: "Meccan", juz: [1], themes: ["Opening", "Guidance", "Praise to Allah"] },
+            { id: 2, nameAr: "ٱلْبَقَرَة", nameEn: "Al-Baqara", nameUr: "البقرة", ayahs: 286, revelationPlace: "Medinan", juz: [1, 2, 3], themes: ["Guidance", "Laws", "Stories of Prophets", "Faith"] },
+            { id: 3, nameAr: "آلِ عِمْرَان", nameEn: "Aal-i-Imran", nameUr: "آل عمران", ayahs: 200, revelationPlace: "Medinan", juz: [3, 4], themes: ["Family of Imran", "Christianity", "Battle of Uhud"] },
+            { id: 4, nameAr: "ٱلنِّسَاء", nameEn: "An-Nisa", nameUr: "النساء", ayahs: 176, revelationPlace: "Medinan", juz: [4, 5, 6], themes: ["Women", "Family Law", "Inheritance"] },
+            { id: 5, nameAr: "ٱلْمَائِدَة", nameEn: "Al-Ma'ida", nameUr: "المائدة", ayahs: 120, revelationPlace: "Medinan", juz: [6, 7], themes: ["The Table Spread", "Dietary Laws", "Relations with People of the Book"] },
+            { id: 6, nameAr: "ٱلْأَنْعَام", nameEn: "Al-An'am", nameUr: "الانعام", ayahs: 165, revelationPlace: "Meccan", juz: [7, 8], themes: ["Cattle", "Monotheism", "Revelation"] },
+            { id: 7, nameAr: "ٱلْأَعْرَاف", nameEn: "Al-A'raf", nameUr: "الأعراف", ayahs: 206, revelationPlace: "Meccan", juz: [8, 9], themes: ["The Heights", "Stories of Prophets", "Good vs. Evil"] },
+            { id: 8, nameAr: "ٱلْأَنْفَال", nameEn: "Al-Anfal", nameUr: "الانفال", ayahs: 75, revelationPlace: "Medinan", juz: [9, 10], themes: ["Spoils of War", "Battle of Badr"] },
+            { id: 9, nameAr: "ٱلتَّوْبَة", nameEn: "At-Tawba", nameUr: "التوبة", ayahs: 129, revelationPlace: "Medinan", juz: [10, 11], themes: ["Repentance", "Relations with Polytheists", "Hypocrites"] },
+            { id: 10, nameAr: "يُونُس", nameEn: "Yunus", nameUr: "یونس", ayahs: 109, revelationPlace: "Meccan", juz: [11], themes: ["Prophet Jonah", "Divine Mercy", "Quran's Authenticity"] },
+            { id: 11, nameAr: "هُود", nameEn: "Hud", nameUr: "ھود", ayahs: 123, revelationPlace: "Meccan", juz: [11, 12], themes: ["Prophet Hud", "Consolation for the Prophet", "Justice"] },
+            { id: 12, nameAr: "يُوسُف", nameEn: "Yusuf", nameUr: "یوسف", ayahs: 111, revelationPlace: "Meccan", juz: [12, 13], themes: ["Prophet Joseph", "Patience", "Divine Plan"] },
+            { id: 13, nameAr: "ٱلرَّعْد", nameEn: "Ar-Ra'd", nameUr: "الرعد", ayahs: 43, revelationPlace: "Medinan", juz: [13], themes: ["Thunder", "Truth and Falsehood", "Power of Allah"] },
+            { id: 14, nameAr: "إِبْرَاهِيم", nameEn: "Ibrahim", nameUr: "ابراہیم", ayahs: 52, revelationPlace: "Meccan", juz: [13], themes: ["Prophet Abraham", "Gratitude", "Warnings"] },
+            { id: 15, nameAr: "ٱلْحِجْر", nameEn: "Al-Hijr", nameUr: "الحجر", ayahs: 99, revelationPlace: "Meccan", juz: [14], themes: ["The Rocky Tract", "Protection of Quran", "Creation"] },
+            { id: 16, nameAr: "ٱلنَّحْل", nameEn: "An-Nahl", nameUr: "النحل", ayahs: 128, revelationPlace: "Meccan", juz: [14], themes: ["The Bee", "Blessings of Allah", "Monotheism"] },
+            { id: 17, nameAr: "ٱلْإِسْرَاء", nameEn: "Al-Isra", nameUr: "الاسراء", ayahs: 111, revelationPlace: "Meccan", juz: [15], themes: ["The Night Journey", "Children of Israel", "Moral Conduct"] },
+            { id: 18, nameAr: "ٱلْكَهْف", nameEn: "Al-Kahf", nameUr: "الکہف", ayahs: 110, revelationPlace: "Meccan", juz: [15, 16], themes: ["The Cave", "Trials and Tribulations", "Knowledge"] },
+            { id: 19, nameAr: "مَرْيَم", nameEn: "Maryam", nameUr: "مریم", ayahs: 98, revelationPlace: "Meccan", juz: [16], themes: ["Mary", "Prophet Jesus", "Prophet Zachariah"] },
+            { id: 20, nameAr: "طه", nameEn: "Ta-Ha", nameUr: "طہٰ", ayahs: 135, revelationPlace: "Meccan", juz: [16], themes: ["Prophet Moses", "Revelation of Quran", "Comfort to Prophet Muhammad"] },
+            { id: 21, nameAr: "ٱلْأَنْبِيَاء", nameEn: "Al-Anbiya", nameUr: "الانبیاء", ayahs: 112, revelationPlace: "Meccan", juz: [17], themes: ["The Prophets", "Unity of Prophetic Message", "Day of Judgment"] },
+            { id: 22, nameAr: "ٱلْحَجّ", nameEn: "Al-Hajj", nameUr: "الحج", ayahs: 78, revelationPlace: "Medinan", juz: [17], themes: ["The Pilgrimage", "Resurrection", "Striving in Allah's Cause"] },
+            { id: 23, nameAr: "ٱلْمُؤْمِنُون", nameEn: "Al-Muminun", nameUr: "المؤمنون", ayahs: 118, revelationPlace: "Meccan", juz: [18], themes: ["The Believers", "Qualities of Believers", "Creation"] },
+            { id: 24, nameAr: "ٱلنُّور", nameEn: "An-Nur", nameUr: "النور", ayahs: 64, revelationPlace: "Medinan", juz: [18], themes: ["The Light", "Social Etiquette", "Punishments for Transgressions"] },
+            { id: 25, nameAr: "ٱلْفُرْقَان", nameEn: "Al-Furqan", nameUr: "الفرقان", ayahs: 77, revelationPlace: "Meccan", juz: [18, 19], themes: ["The Criterion", "Attributes of the Righteous", "Prophethood of Muhammad"] },
+            { id: 26, nameAr: "ٱلشُّعَرَاء", nameEn: "Ash-Shu'ara", nameUr: "الشعراء", ayahs: 227, revelationPlace: "Meccan", juz: [19], themes: ["The Poets", "Stories of Prophets", "Challenge to Disbelievers"] },
+            { id: 27, nameAr: "ٱلنَّمْل", nameEn: "An-Naml", nameUr: "النمل", ayahs: 93, revelationPlace: "Meccan", juz: [19, 20], themes: ["The Ant", "Prophet Solomon", "Prophet Salih"] },
+            { id: 28, nameAr: "ٱلْقَصَص", nameEn: "Al-Qasas", nameUr: "القصص", ayahs: 88, revelationPlace: "Meccan", juz: [20], themes: ["The Stories", "Prophet Moses", "Arrogance of Pharaoh"] },
+            { id: 29, nameAr: "ٱلْعَنْكَبُوت", nameEn: "Al-Ankabut", nameUr: "العنکبوت", ayahs: 69, revelationPlace: "Meccan", juz: [20, 21], themes: ["The Spider", "Trials of Faith", "Hypocrisy"] },
+            { id: 30, nameAr: "ٱلرُّوم", nameEn: "Ar-Rum", nameUr: "الروم", ayahs: 60, revelationPlace: "Meccan", juz: [21], themes: ["The Romans", "Prophecy of Roman Victory", "Signs of Allah"] },
+            { id: 31, nameAr: "لُقْمَان", nameEn: "Luqman", nameUr: "لقمان", ayahs: 34, revelationPlace: "Meccan", juz: [21], themes: ["Luqman the Wise", "Wisdom", "Parental Advice"] },
+            { id: 32, nameAr: "ٱلسَّجْدَة", nameEn: "As-Sajda", nameUr: "السجدة", ayahs: 30, revelationPlace: "Meccan", juz: [21], themes: ["The Prostration", "Creation of Man", "Resurrection"] },
+            { id: 33, nameAr: "ٱلْأَحْزَاب", nameEn: "Al-Ahzab", nameUr: "الاحزاب", ayahs: 73, revelationPlace: "Medinan", juz: [21, 22], themes: ["The Combined Forces", "Battle of the Trench", "Conduct of Prophet's Wives"] },
+            { id: 34, nameAr: "سَبَأ", nameEn: "Saba", nameUr: "سبا", ayahs: 54, revelationPlace: "Meccan", juz: [22], themes: ["Sheba", "Prophet David and Solomon", "Gratitude and Ingratitude"] },
+            { id: 35, nameAr: "فَاطِر", nameEn: "Fatir", nameUr: "فاطر", ayahs: 45, revelationPlace: "Meccan", juz: [22], themes: ["The Originator", "Angels", "Allah's Power in Creation"] },
+            { id: 36, nameAr: "يس", nameEn: "Ya-Sin", nameUr: "یٰس", ayahs: 83, revelationPlace: "Meccan", juz: [22, 23], themes: ["Heart of the Quran", "Resurrection", "Prophethood"] },
+            { id: 37, nameAr: "ٱلصَّافَّات", nameEn: "As-Saffat", nameUr: "الصافات", ayahs: 182, revelationPlace: "Meccan", juz: [23], themes: ["Those Who Set the Ranks", "Stories of Prophets", "Rejection of Idolatry"] },
+            { id: 38, nameAr: "ص", nameEn: "Sad", nameUr: "ص", ayahs: 88, revelationPlace: "Meccan", juz: [23], themes: ["The Letter Sad", "Prophet David", "Prophet Solomon", "Dispute in Heaven"] },
+            { id: 39, nameAr: "ٱلزُّمَر", nameEn: "Az-Zumar", nameUr: "الزمر", ayahs: 75, revelationPlace: "Meccan", juz: [23, 24], themes: ["The Groups", "Sincere Worship", "Day of Judgment"] },
+            { id: 40, nameAr: "غَافِر", nameEn: "Ghafir", nameUr: "غافر", ayahs: 85, revelationPlace: "Meccan", juz: [24], themes: ["The Forgiver", "Believer from Pharaoh's Family", "Divine Justice"] },
+            { id: 41, nameAr: "فُصِّلَتْ", nameEn: "Fussilat", nameUr: "فصلت", ayahs: 54, revelationPlace: "Meccan", juz: [24, 25], themes: ["Explained in Detail", "Quran's Eloquence", "Warning to Disbelievers"] },
+            { id: 42, nameAr: "ٱلشُّورَىٰ", nameEn: "Ash-Shuraa", nameUr: "الشوریٰ", ayahs: 53, revelationPlace: "Meccan", juz: [25], themes: ["Consultation", "Unity of Religion", "Divine Revelation"] },
+            { id: 43, nameAr: "ٱلزُّخْرُف", nameEn: "Az-Zukhruf", nameUr: "الزخرف", ayahs: 89, revelationPlace: "Meccan", juz: [25], themes: ["Ornaments of Gold", "False Values", "Mercy of Allah"] },
+            { id: 44, nameAr: "ٱلدُّخَان", nameEn: "Ad-Dukhan", nameUr: "الدخان", ayahs: 59, revelationPlace: "Meccan", juz: [25], themes: ["The Smoke", "Warning of Punishment", "Day of Decision"] },
+            { id: 45, nameAr: "ٱلْجَاثِيَة", nameEn: "Al-Jathiya", nameUr: "الجاثیة", ayahs: 37, revelationPlace: "Meccan", juz: [25], themes: ["The Crouching", "Signs in Creation", "Accountability"] },
+            { id: 46, nameAr: "ٱلْأَحْقَاف", nameEn: "Al-Ahqaf", nameUr: "الاحقاف", ayahs: 35, revelationPlace: "Meccan", juz: [26], themes: ["The Wind-Curved Sandhills", "Jinn Listening to Quran", "Patience"] },
+            { id: 47, nameAr: "مُحَمَّد", nameEn: "Muhammad", nameUr: "محمد", ayahs: 38, revelationPlace: "Medinan", juz: [26], themes: ["Prophet Muhammad", "Fighting in Allah's Cause", "Hypocrites"] },
+            { id: 48, nameAr: "ٱلْفَتْح", nameEn: "Al-Fath", nameUr: "الفتح", ayahs: 29, revelationPlace: "Medinan", juz: [26], themes: ["The Victory", "Treaty of Hudaybiyyah", "Qualities of Believers"] },
+            { id: 49, nameAr: "ٱلْحُجُرَات", nameEn: "Al-Hujurat", nameUr: "الحجرات", ayahs: 18, revelationPlace: "Medinan", juz: [26], themes: ["The Inner Apartments", "Social Etiquette", "Brotherhood in Islam"] },
+            { id: 50, nameAr: "ق", nameEn: "Qaf", nameUr: "ق", ayahs: 45, revelationPlace: "Meccan", juz: [26], themes: ["The Letter Qaf", "Resurrection", "Creation"] },
+            { id: 51, nameAr: "ٱلذَّارِيَات", nameEn: "Adh-Dhariyat", nameUr: "الذاریات", ayahs: 60, revelationPlace: "Meccan", juz: [26, 27], themes: ["The Winnowing Winds", "Provision from Allah", "Purpose of Creation"] },
+            { id: 52, nameAr: "ٱلطُّور", nameEn: "At-Tur", nameUr: "الطور", ayahs: 49, revelationPlace: "Meccan", juz: [27], themes: ["The Mount", "Oaths", "Day of Judgment"] },
+            { id: 53, nameAr: "ٱلنَّجْم", nameEn: "An-Najm", nameUr: "النجم", ayahs: 62, revelationPlace: "Meccan", juz: [27], themes: ["The Star", "Revelation to Prophet Muhammad", "Prostration"] },
+            { id: 54, nameAr: "ٱلْقَمَر", nameEn: "Al-Qamar", nameUr: "القمر", ayahs: 55, revelationPlace: "Meccan", juz: [27], themes: ["The Moon", "Splitting of the Moon", "Stories of Punishment"] },
+            { id: 55, nameAr: "ٱلرَّحْمَٰن", nameEn: "Ar-Rahman", nameUr: "الرحمٰن", ayahs: 78, revelationPlace: "Medinan", juz: [27], themes: ["The Most Merciful", "Blessings of Allah", "Paradise and Hell"] },
+            { id: 56, nameAr: "ٱلْوَاقِعَة", nameEn: "Al-Waqi'a", nameUr: "الواقعة", ayahs: 96, revelationPlace: "Meccan", juz: [27], themes: ["The Inevitable Event", "Classes of People on Judgment Day", "Resurrection"] },
+            { id: 57, nameAr: "ٱلْحَدِيد", nameEn: "Al-Hadid", nameUr: "الحدید", ayahs: 29, revelationPlace: "Medinan", juz: [27], themes: ["Iron", "Spending in Allah's Cause", "Monasticism"] },
+            { id: 58, nameAr: "ٱلْمُجَادِلَة", nameEn: "Al-Mujadila", nameUr: "المجادلة", ayahs: 22, revelationPlace: "Medinan", juz: [28], themes: ["The Pleading Woman", "Zihar (Form of Divorce)", "Secret Counsels"] },
+            { id: 59, nameAr: "ٱلْحَشْر", nameEn: "Al-Hashr", nameUr: "الحشر", ayahs: 24, revelationPlace: "Medinan", juz: [28], themes: ["The Exile", "Banu Nadir Tribe", "Attributes of Allah"] },
+            { id: 60, nameAr: "ٱلْمُمْتَحَنَة", nameEn: "Al-Mumtahina", nameUr: "الممتحنة", ayahs: 13, revelationPlace: "Medinan", juz: [28], themes: ["She Who is Examined", "Relations with Disbelievers", "Allegiance of Women"] },
+            { id: 61, nameAr: "ٱلصَّفّ", nameEn: "As-Saff", nameUr: "الصف", ayahs: 14, revelationPlace: "Medinan", juz: [28], themes: ["The Ranks", "Striving in Allah's Cause", "Prophet Jesus's Disciples"] },
+            { id: 62, nameAr: "ٱلْجُمُعَة", nameEn: "Al-Jumu'a", nameUr: "الجمعة", ayahs: 11, revelationPlace: "Medinan", juz: [28], themes: ["Friday Prayer", "Importance of Knowledge", "Warning Against Materialism"] },
+            { id: 63, nameAr: "ٱلْمُنَافِقُون", nameEn: "Al-Munafiqun", nameUr: "المنافقون", ayahs: 11, revelationPlace: "Medinan", juz: [28], themes: ["The Hypocrites", "Characteristics of Hypocrites", "Spending for Allah"] },
+            { id: 64, nameAr: "ٱلتَّغَابُن", nameEn: "At-Taghabun", nameUr: "التغابن", ayahs: 18, revelationPlace: "Medinan", juz: [28], themes: ["Mutual Dispossession", "Day of Judgment", "Trials in Wealth and Children"] },
+            { id: 65, nameAr: "ٱلطَّلَاق", nameEn: "At-Talaq", nameUr: "الطلاق", ayahs: 12, revelationPlace: "Medinan", juz: [28], themes: ["Divorce", "Regulations of Divorce", "Provision for Divorced Women"] },
+            { id: 66, nameAr: "ٱلتَّحْرِيم", nameEn: "At-Tahrim", nameUr: "التحریم", ayahs: 12, revelationPlace: "Medinan", juz: [28], themes: ["The Prohibition", "Prophet's Domestic Affairs", "Examples of Believing and Disbelieving Women"] },
+            { id: 67, nameAr: "ٱلْمُلْك", nameEn: "Al-Mulk", nameUr: "الملک", ayahs: 30, revelationPlace: "Meccan", juz: [29], themes: ["Dominion", "Power of Allah", "Purpose of Life and Death"] },
+            { id: 68, nameAr: "ٱلْقَلَم", nameEn: "Al-Qalam", nameUr: "القلم", ayahs: 52, revelationPlace: "Meccan", juz: [29], themes: ["The Pen", "Prophet Muhammad's Character", "Story of People of the Garden"] },
+            { id: 69, nameAr: "ٱلْحَاقَّة", nameEn: "Al-Haaqqa", nameUr: "الحاقة", ayahs: 52, revelationPlace: "Meccan", juz: [29], themes: ["The Reality", "Day of Judgment", "Fate of Past Nations"] },
+            { id: 70, nameAr: "ٱلْمَعَارِج", nameEn: "Al-Ma'arij", nameUr: "المعارج", ayahs: 44, revelationPlace: "Meccan", juz: [29], themes: ["The Ways of Ascent", "Impatience of Man", "Day of Judgment"] },
+            { id: 71, nameAr: "نُوح", nameEn: "Nuh", nameUr: "نوح", ayahs: 28, revelationPlace: "Meccan", juz: [29], themes: ["Prophet Noah", "Noah's Preaching", "Rejection by His People"] },
+            { id: 72, nameAr: "ٱلْجِنّ", nameEn: "Al-Jinn", nameUr: "الجن", ayahs: 28, revelationPlace: "Meccan", juz: [29], themes: ["The Jinn", "Jinn Listening to Quran", "Monotheism"] },
+            { id: 73, nameAr: "ٱلْمُزَّمِّل", nameEn: "Al-Muzzammil", nameUr: "المزمل", ayahs: 20, revelationPlace: "Meccan", juz: [29], themes: ["The Enshrouded One", "Night Prayer", "Patience"] },
+            { id: 74, nameAr: "ٱلْمُدَّثِّر", nameEn: "Al-Muddaththir", nameUr: "المدثر", ayahs: 56, revelationPlace: "Meccan", juz: [29], themes: ["The Cloaked One", "Warning", "Keepers of Hell"] },
+            { id: 75, nameAr: "ٱلْقِيَامَة", nameEn: "Al-Qiyama", nameUr: "القیامة", ayahs: 40, revelationPlace: "Meccan", juz: [29], themes: ["The Resurrection", "Certainty of Resurrection", "State of Man on That Day"] },
+            { id: 76, nameAr: "ٱلْإِنْسَان", nameEn: "Al-Insan", nameUr: "الانسان", ayahs: 31, revelationPlace: "Medinan", juz: [29], themes: ["Man", "Creation of Man", "Rewards of the Righteous"] },
+            { id: 77, nameAr: "ٱلْمُرْسَلَات", nameEn: "Al-Mursalat", nameUr: "المرسلات", ayahs: 50, revelationPlace: "Meccan", juz: [29], themes: ["Those Sent Forth", "Day of Decision", "Warnings"] },
+            { id: 78, nameAr: "ٱلنَّبَإ", nameEn: "An-Naba", nameUr: "النبأ", ayahs: 40, revelationPlace: "Meccan", juz: [30], themes: ["The Tidings", "Resurrection", "Signs in Universe"] },
+            { id: 79, nameAr: "ٱلنَّازِعَات", nameEn: "An-Nazi'at", nameUr: "النازعات", ayahs: 46, revelationPlace: "Meccan", juz: [30], themes: ["Those Who Drag Forth", "Resurrection", "Story of Moses and Pharaoh"] },
+            { id: 80, nameAr: "عَبَسَ", nameEn: "Abasa", nameUr: "عبس", ayahs: 42, revelationPlace: "Meccan", juz: [30], themes: ["He Frowned", "Incident with Blind Man", "Guidance"] },
+            { id: 81, nameAr: "ٱلتَّكْوِير", nameEn: "At-Takwir", nameUr: "التکویر", ayahs: 29, revelationPlace: "Meccan", juz: [30], themes: ["The Overthrowing", "Signs of End of World", "Truth of Quran"] },
+            { id: 82, nameAr: "ٱلْإِنْفِطَار", nameEn: "Al-Infitar", nameUr: "الانفطار", ayahs: 19, revelationPlace: "Meccan", juz: [30], themes: ["The Cleaving Asunder", "Day of Judgment", "Recording Angels"] },
+            { id: 83, nameAr: "ٱلْمُطَفِّفِين", nameEn: "Al-Mutaffifin", nameUr: "المطففین", ayahs: 36, revelationPlace: "Meccan", juz: [30], themes: ["The Defrauders", "Warning Against Cheating", "Record of Deeds"] },
+            { id: 84, nameAr: "ٱلْإِنْشِقَاق", nameEn: "Al-Inshiqaq", nameUr: "الانشقاق", ayahs: 25, revelationPlace: "Meccan", juz: [30], themes: ["The Sundering", "Day of Judgment", "Accountability"] },
+            { id: 85, nameAr: "ٱلْبُرُوج", nameEn: "Al-Buruj", nameUr: "البروج", ayahs: 22, revelationPlace: "Meccan", juz: [30], themes: ["The Mansions of the Stars", "Story of People of the Ditch", "Preserved Tablet"] },
+            { id: 86, nameAr: "ٱلطَّارِق", nameEn: "At-Tariq", nameUr: "الطارق", ayahs: 17, revelationPlace: "Meccan", juz: [30], themes: ["The Night-Comer", "Creation of Man", "Divine Power"] },
+            { id: 87, nameAr: "ٱلْأَعْلَىٰ", nameEn: "Al-Ala", nameUr: "الاعلیٰ", ayahs: 19, revelationPlace: "Meccan", juz: [30], themes: ["The Most High", "Glorification of Allah", "Revelation"] },
+            { id: 88, nameAr: "ٱلْغَاشِيَة", nameEn: "Al-Ghashiya", nameUr: "الغاشیة", ayahs: 26, revelationPlace: "Meccan", juz: [30], themes: ["The Overwhelming Event", "Description of Hell and Paradise", "Reflection on Creation"] },
+            { id: 89, nameAr: "ٱلْفَجْر", nameEn: "Al-Fajr", nameUr: "الفجر", ayahs: 30, revelationPlace: "Meccan", juz: [30], themes: ["The Dawn", "Oaths", "Fate of Transgressors", "Contented Soul"] },
+            { id: 90, nameAr: "ٱلْبَلَد", nameEn: "Al-Balad", nameUr: "البلد", ayahs: 20, revelationPlace: "Meccan", juz: [30], themes: ["The City", "Man's Struggle", "Path of Righteousness"] },
+            { id: 91, nameAr: "ٱلشَّمْس", nameEn: "Ash-Shams", nameUr: "الشمس", ayahs: 15, revelationPlace: "Meccan", juz: [30], themes: ["The Sun", "Oaths", "Purification of Soul", "Thamud Tribe"] },
+            { id: 92, nameAr: "ٱللَّيْل", nameEn: "Al-Layl", nameUr: "اللیل", ayahs: 21, revelationPlace: "Meccan", juz: [30], themes: ["The Night", "Striving for Good vs. Evil", "Divine Guidance"] },
+            { id: 93, nameAr: "ٱلضُّحَىٰ", nameEn: "Ad-Duha", nameUr: "الضحیٰ", ayahs: 11, revelationPlace: "Meccan", juz: [30], themes: ["The Morning Brightness", "Comfort to Prophet Muhammad", "Care for Orphans and Needy"] },
+            { id: 94, nameAr: "ٱلشَّرْح", nameEn: "Ash-Sharh", nameUr: "الشرح", ayahs: 8, revelationPlace: "Meccan", juz: [30], themes: ["The Expansion", "Relief After Hardship", "Dedication to Worship"] },
+            { id: 95, nameAr: "ٱلتِّين", nameEn: "At-Tin", nameUr: "التین", ayahs: 8, revelationPlace: "Meccan", juz: [30], themes: ["The Fig", "Creation of Man in Best Form", "Faith and Good Deeds"] },
+            { id: 96, nameAr: "ٱلْعَلَق", nameEn: "Al-Alaq", nameUr: "العلق", ayahs: 19, revelationPlace: "Meccan", juz: [30], themes: ["The Clot", "First Revelation", "Importance of Knowledge", "Prostration"] },
+            { id: 97, nameAr: "ٱلْقَدْر", nameEn: "Al-Qadr", nameUr: "القدر", ayahs: 5, revelationPlace: "Meccan", juz: [30], themes: ["The Power", "Night of Decree", "Revelation of Quran"] },
+            { id: 98, nameAr: "ٱلْبَيِّنَة", nameEn: "Al-Bayyina", nameUr: "البینة", ayahs: 8, revelationPlace: "Medinan", juz: [30], themes: ["The Clear Proof", "People of the Book", "Sincere Worship"] },
+            { id: 99, nameAr: "ٱلزَّلْزَلَة", nameEn: "Az-Zalzala", nameUr: "الزلزلة", ayahs: 8, revelationPlace: "Medinan", juz: [30], themes: ["The Earthquake", "Signs of Day of Judgment", "Weighing of Deeds"] },
+            { id: 100, nameAr: "ٱلْعَادِيَات", nameEn: "Al-Adiyat", nameUr: "العادیات", ayahs: 11, revelationPlace: "Meccan", juz: [30], themes: ["The Chargers", "Man's Ingratitude", "Day of Judgment"] },
+            { id: 101, nameAr: "ٱلْقَارِعَة", nameEn: "Al-Qari'a", nameUr: "القارعہ", ayahs: 11, revelationPlace: "Meccan", juz: [30], themes: ["The Striking Calamity", "Day of Judgment", "Weighing of Deeds"] },
+            { id: 102, nameAr: "ٱلتَّكَاثُر", nameEn: "At-Takathur", nameUr: "التکاثر", ayahs: 8, revelationPlace: "Meccan", juz: [30], themes: ["Rivalry in Worldly Increase", "Warning Against Materialism", "Accountability"] },
+            { id: 103, nameAr: "ٱلْعَصْر", nameEn: "Al-Asr", nameUr: "العصر", ayahs: 3, revelationPlace: "Meccan", juz: [30], themes: ["The Declining Day", "Path to Success: Faith, Good Deeds, Truth, Patience"] },
+            { id: 104, nameAr: "ٱلْهُمَزَة", nameEn: "Al-Humaza", nameUr: "الھمزۃ", ayahs: 9, revelationPlace: "Meccan", juz: [30], themes: ["The Slanderer", "Warning Against Slander and Hoarding Wealth", "Punishment"] },
+            { id: 105, nameAr: "ٱلْفِيل", nameEn: "Al-Fil", nameUr: "الفیل", ayahs: 5, revelationPlace: "Meccan", juz: [30], themes: ["The Elephant", "Story of People of the Elephant", "Protection of Kaaba"] },
+            { id: 106, nameAr: "قُرَيْش", nameEn: "Quraysh", nameUr: "قریش", ayahs: 4, revelationPlace: "Meccan", juz: [30], themes: ["Quraysh Tribe", "Blessings on Quraysh", "Call to Worship Allah"] },
+            { id: 107, nameAr: "ٱلْمَاعُون", nameEn: "Al-Ma'un", nameUr: "الماعون", ayahs: 7, revelationPlace: "Meccan", juz: [30], themes: ["Small Kindnesses", "Hypocrisy in Prayer", "Neglect of Orphans and Needy"] },
+            { id: 108, nameAr: "ٱلْكَوْثَر", nameEn: "Al-Kawthar", nameUr: "الکوثر", ayahs: 3, revelationPlace: "Meccan", juz: [30], themes: ["Abundance", "Gift to Prophet Muhammad", "Instruction to Pray and Sacrifice"] },
+            { id: 109, nameAr: "ٱلْكَافِرُون", nameEn: "Al-Kafirun", nameUr: "الکافرون", ayahs: 6, revelationPlace: "Meccan", juz: [30], themes: ["The Disbelievers", "Declaration of Disassociation from False Worship"] },
+            { id: 110, nameAr: "ٱلنَّصْر", nameEn: "An-Nasr", nameUr: "النصر", ayahs: 3, revelationPlace: "Medinan", juz: [30], themes: ["Divine Support", "Victory of Islam", "Instruction to Glorify Allah and Seek Forgiveness"] },
+            { id: 111, nameAr: "ٱلْمَسَد", nameEn: "Al-Masad", nameUr: "المسد", ayahs: 5, revelationPlace: "Meccan", juz: [30], themes: ["The Palm Fiber", "Condemnation of Abu Lahab and His Wife"] },
+            { id: 112, nameAr: "ٱلْإِخْلَاص", nameEn: "Al-Ikhlas", nameUr: "الاخلاص", ayahs: 4, revelationPlace: "Meccan", juz: [30], themes: ["Sincerity", "Declaration of Allah's Oneness"] },
+            { id: 113, nameAr: "ٱلْفَلَق", nameEn: "Al-Falaq", nameUr: "الفلق", ayahs: 5, revelationPlace: "Meccan", juz: [30], themes: ["The Daybreak", "Seeking Refuge in Allah from Evils"] },
+            { id: 114, nameAr: "ٱلنَّاس", nameEn: "An-Nas", nameUr: "الناس", ayahs: 6, revelationPlace: "Meccan", juz: [30], themes: ["Mankind", "Seeking Refuge in Allah from Whispering of Satan"] }
+        ];
+
+
+        // --- IndexedDB Helper Functions ---
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = event => {
+                    db = event.target.result;
+                    if (!db.objectStoreNames.contains(AYAH_STORE)) {
+                        db.createObjectStore(AYAH_STORE, { keyPath: ['surah', 'ayah'] });
+                    }
+                    if (!db.objectStoreNames.contains(SURAH_METADATA_STORE)) {
+                        db.createObjectStore(SURAH_METADATA_STORE, { keyPath: 'id' });
+                    }
+                    if (!db.objectStoreNames.contains(USER_PROGRESS_STORE)) {
+                        db.createObjectStore(USER_PROGRESS_STORE, { keyPath: 'key' });
+                    }
+                    if (!db.objectStoreNames.contains(APP_STATE_STORE)) {
+                        db.createObjectStore(APP_STATE_STORE, { keyPath: 'key' });
+                    }
+                };
+                request.onsuccess = event => {
+                    db = event.target.result;
+                    resolve(db);
+                };
+                request.onerror = event => {
+                    console.error("IndexedDB error:", event.target.errorCode);
+                    reject("Error opening IndexedDB.");
+                };
+            });
+        }
+
+        function getStore(storeName, mode = 'readonly') {
+            if (!db) {
+                console.error("DB not initialized for getStore");
+                return null; // Or throw error
+            }
+            const transaction = db.transaction(storeName, mode);
+            return transaction.objectStore(storeName);
+        }
+        
+        function addToStore(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const store = getStore(storeName, 'readwrite');
+                if (!store) return reject(`Store ${storeName} not found`);
+                const request = store.add(data);
+                request.onsuccess = () => resolve();
+                request.onerror = event => reject(`Error adding to ${storeName}: ${event.target.error}`);
+            });
+        }
+
+        function putToStore(storeName, data) {
+            return new Promise((resolve, reject) => {
+                const store = getStore(storeName, 'readwrite');
+                 if (!store) return reject(`Store ${storeName} not found`);
+                const request = store.put(data);
+                request.onsuccess = () => resolve();
+                request.onerror = event => reject(`Error putting to ${storeName}: ${event.target.error}`);
+            });
+        }
+        
+        function getFromStore(storeName, key) {
+            return new Promise((resolve, reject) => {
+                const store = getStore(storeName);
+                if (!store) return reject(`Store ${storeName} not found`);
+                const request = store.get(key);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = event => reject(`Error getting from ${storeName}: ${event.target.error}`);
+            });
+        }
+
+        function getAllFromStore(storeName) {
+            return new Promise((resolve, reject) => {
+                const store = getStore(storeName);
+                if (!store) return reject(`Store ${storeName} not found`);
+                const request = store.getAll();
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = event => reject(`Error getting all from ${storeName}: ${event.target.error}`);
+            });
+        }
+
+        function clearStore(storeName) {
+            return new Promise((resolve, reject) => {
+                const store = getStore(storeName, 'readwrite');
+                if (!store) return reject(`Store ${storeName} not found`);
+                const request = store.clear();
+                request.onsuccess = () => resolve();
+                request.onerror = event => reject(`Error clearing ${storeName}: ${event.target.error}`);
+            });
+        }
+        
+        // --- Data Parsing and Loading ---
+        async function parseDataAmLine(line) {
+            const regex = /^([\s\S]+?) ترجمہ: ([\s\S]+?)<br\/>س (\d{3}) آ (\d{3})$/;
+            const match = line.match(regex);
+            if (match) {
+                return {
+                    arabic: match[1].trim(),
+                    urdu: match[2].trim(),
+                    surah: parseInt(match[3], 10),
+                    ayah: parseInt(match[4], 10)
+                };
+            }
+            return null;
+        }
+
+        async function processDataAm(fileContent) {
+            loadingMessage.textContent = "Processing Quran data (data.AM)...";
+            document.getElementById('initialDataLoadProgressContainer').style.display = 'block';
+            initialDataLoadProgressBar.style.width = '0%';
+
+            const lines = fileContent.split('\n');
+            const totalLines = lines.length;
+            let processedCount = 0;
+
+            const transaction = db.transaction([AYAH_STORE], 'readwrite');
+            const ayahStore = transaction.objectStore(AYAH_STORE);
+            await new Promise(resolve => ayahStore.clear().onsuccess = resolve); // Clear existing ayahs
+
+            for (const line of lines) {
+                if (line.trim() === "") continue;
+                const parsedAyah = await parseDataAmLine(line);
+                if (parsedAyah) {
+                    try {
+                        await new Promise((resolve, reject) => {
+                            const req = ayahStore.add(parsedAyah);
+                            req.onsuccess = resolve;
+                            req.onerror = reject;
+                        });
+                    } catch (e) {
+                        // console.warn(`Skipping duplicate or error adding ayah: S${parsedAyah.surah}A${parsedAyah.ayah}`, e);
+                        // It's possible some ayahs might be duplicated if data.AM is not clean, or key already exists.
+                        // For now, we'll just log and continue.
+                    }
+                } else {
+                    console.warn("Could not parse line:", line);
+                }
+                processedCount++;
+                if (processedCount % 100 === 0 || processedCount === totalLines) {
+                    const progress = (processedCount / totalLines) * 100;
+                    initialDataLoadProgressBar.style.width = `${progress}%`;
+                    initialDataLoadProgressBar.textContent = `${Math.round(progress)}%`;
+                }
+            }
+            
+            return new Promise((resolve, reject) => {
+                transaction.oncomplete = () => {
+                    initialDataLoadProgressBar.textContent = `Done`;
+                    resolve();
+                };
+                transaction.onerror = (event) => {
+                    console.error("Transaction error during data.AM processing:", event.target.error);
+                    reject("Error saving Quran data.");
+                };
+            });
+        }
+        
+        async function populateSurahMetadata() {
+            loadingMessage.textContent = "Storing Surah information...";
+            const transaction = db.transaction([SURAH_METADATA_STORE], 'readwrite');
+            const store = transaction.objectStore(SURAH_METADATA_STORE);
+            await new Promise(resolve => store.clear().onsuccess = resolve); // Clear existing metadata
+
+            for (const surah of surahMasterData) {
+                 await new Promise((resolve, reject) => {
+                    const req = store.add(surah);
+                    req.onsuccess = resolve;
+                    req.onerror = reject;
+                });
+            }
+            return new Promise((resolve, reject) => {
+                transaction.oncomplete = resolve;
+                transaction.onerror = (event) => {
+                    console.error("Transaction error during Surah metadata population:", event.target.error);
+                    reject("Error saving Surah metadata.");
+                };
+            });
+        }
+
+        async function checkAndLoadInitialData(forceReloadDataAm = false) {
+            try {
+                const processedVersion = await getFromStore(APP_STATE_STORE, DATA_AM_PROCESSED_KEY);
+                
+                if (forceReloadDataAm || !processedVersion || processedVersion.value !== CURRENT_DATA_VERSION) {
+                    loadingOverlay.style.display = 'flex';
+                    loadingMessage.textContent = "Performing first-time setup or update...";
+                    
+                    await populateSurahMetadata();
+                    showNotification("Surah metadata loaded.", "success");
+
+                    loadingMessage.textContent = "Attempting to auto-load data.AM...";
+                    try {
+                        const response = await fetch('./data.AM');
+                        if (!response.ok) throw new Error(`HTTP error! status: ${response.status} - data.AM not found or inaccessible.`);
+                        const fileContent = await response.text();
+                        await processDataAm(fileContent);
+                        await putToStore(APP_STATE_STORE, { key: DATA_AM_PROCESSED_KEY, value: CURRENT_DATA_VERSION });
+                        dataAmStatus.textContent = `Status: data.AM processed (Version ${CURRENT_DATA_VERSION}).`;
+                        showNotification("Quran data (data.AM) processed successfully!", "success");
+                    } catch (error) {
+                        console.error("Error auto-loading data.AM:", error);
+                        loadingMessage.innerHTML = `Could not auto-load <code>data.AM</code>.<br/>Please ensure <code>data.AM</code> is in the same folder as this HTML file, or load it manually.`;
+                        manualDataAmLoadButton.style.display = 'block';
+                        dataAmStatus.textContent = `Status: data.AM not loaded. Please load manually.`;
+                        // Don't hide overlay, wait for manual load or user action
+                        return; // Stop further initialization until data is loaded
+                    }
+                } else {
+                     dataAmStatus.textContent = `Status: data.AM already processed (Version ${CURRENT_DATA_VERSION}).`;
+                }
+                
+                await loadUserProgress();
+                allSurahMetadata = await getAllFromStore(SURAH_METADATA_STORE);
+                allSurahMetadata.sort((a,b) => a.id - b.id); // Ensure sorted by ID
+
+                populateSurahDatalist();
+                initializeUI();
+                loadingOverlay.style.display = 'none';
+                navigateToView('game'); // Default view
+            } catch (err) {
+                console.error("Error during initial data load:", err);
+                loadingMessage.textContent = `Error: ${err.message}. Please try refreshing or check console.`;
+                showNotification(`Initialization Error: ${err.message}`, "error");
+                // Potentially offer manual data load options here too
+            }
+        }
+
+        manualDataAmLoadButton.onclick = () => {
+            dataAmFileInput.click(); // Trigger hidden file input
+        };
+        
+        reloadDataAmButton.onclick = () => {
+            showConfirmationModal("This will re-process the data.AM file. This is useful if you have an updated file. Continue?", () => {
+                 dataAmFileInput.click(); // Trigger hidden file input for re-processing
+            });
+        };
+
+        dataAmFileInput.onchange = async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                loadingOverlay.style.display = 'flex';
+                loadingMessage.textContent = "Loading selected data.AM file...";
+                manualDataAmLoadButton.style.display = 'none'; // Hide button during processing
+                document.getElementById('initialDataLoadProgressContainer').style.display = 'block';
+                initialDataLoadProgressBar.style.width = '0%';
+
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    try {
+                        await processDataAm(e.target.result);
+                        await putToStore(APP_STATE_STORE, { key: DATA_AM_PROCESSED_KEY, value: CURRENT_DATA_VERSION });
+                        dataAmStatus.textContent = `Status: data.AM processed (Version ${CURRENT_DATA_VERSION}).`;
+                        showNotification("Quran data (data.AM) processed successfully from file!", "success");
+                        
+                        // Reload necessary data and UI
+                        allSurahMetadata = await getAllFromStore(SURAH_METADATA_STORE);
+                        allSurahMetadata.sort((a,b) => a.id - b.id);
+                        populateSurahDatalist();
+                        initializeUI(); // Re-initialize UI elements that depend on this data
+                        loadingOverlay.style.display = 'none';
+                        if (!views.game.classList.contains('active') && !views.learn.classList.contains('active') && !views.progress.classList.contains('active') && !views.settings.classList.contains('active')) {
+                            navigateToView('game'); // Navigate to game if no view is active
+                        }
+
+                    } catch (err) {
+                        console.error("Error processing selected data.AM:", err);
+                        loadingMessage.textContent = `Error processing file: ${err.message}. Try again.`;
+                        showNotification(`Error processing file: ${err.message}`, "error");
+                        manualDataAmLoadButton.style.display = 'block'; // Show button again on error
+                    } finally {
+                        dataAmFileInput.value = ""; // Reset file input
+                        dataLoadProgressContainer.style.display = 'none'; // Hide specific progress bar for this button
+                    }
+                };
+                reader.readAsText(file);
+            }
+        };
+
+        // --- UI Management ---
+        function navigateToView(viewName) {
+    Object.values(views).forEach(view => {
+        if (view) view.classList.remove('active');
+    });
+    Object.values(navButtons).forEach(button => {
+        if (button) button.classList.remove('active');
+    });
+    if (views[viewName]) views[viewName].classList.add('active');
+    if (navButtons[viewName]) navButtons[viewName].classList.add('active');
+
+    // Specific actions when navigating to a view
+    if (viewName === 'learn') renderLearnMode();
+    if (viewName === 'progress') renderProgressView();
+    if (viewName === 'game' && !currentQuestion) startGame();
+}
+
+        function initializeUI() {
+            // Setup navigation
+            navButtons.game.onclick = () => navigateToView('game');
+            navButtons.learn.onclick = () => navigateToView('learn');
+            navButtons.progress.onclick = () => navigateToView('progress');
+            navButtons.settings.onclick = () => navigateToView('settings');
+
+            // Settings
+            difficultyLevelSelect.value = difficulty;
+            difficultyLevelSelect.onchange = (e) => {
+                difficulty = e.target.value;
+                saveUserProgress();
+                showNotification(`Difficulty set to ${difficulty}. New game will use this.`, "info");
+            };
+            questionModeSelect.value = questionType;
+            questionModeSelect.onchange = (e) => {
+                questionType = e.target.value;
+                saveUserProgress();
+                configureQuestionInputType(); // Update input type immediately if in game
+                showNotification(`Question mode set to ${questionType}. New game will use this.`, "info");
+            };
+
+            // Game buttons
+            hintButton.onclick = useHint;
+            nextQuestionButton.onclick = startGame;
+            submitGuessButton.onclick = () => checkAnswer(guessInput.value.trim()); // For type-in
+
+            // Learn mode
+            learnSearchInput.oninput = renderLearnMode;
+            backToLearnListButton.onclick = () => {
+                learnSurahDetailView.style.display = 'none';
+                learnSurahList.style.display = 'block';
+                learnSearchInput.style.display = 'block';
+            };
+            
+            // Settings buttons
+            resetProgressButton.onclick = confirmResetProgress;
+            backupDataButton.onclick = backupData;
+            restoreDataButton.onclick = () => {
+                if (restoreDataInput.files.length === 0) {
+                    showNotification("Please select a backup file first.", "warn");
+                    return;
+                }
+                const file = restoreDataInput.files[0];
+                confirmRestoreData(file);
+            };
+            
+            // Modal
+            modalOkButton.onclick = () => notificationModal.style.display = 'none';
+
+            updateScoreDisplay();
+        }
+        
+        function showNotification(message, type = "info", duration = 3000) {
+            // Simple console log for now, can be expanded to a visual notification
+            console.log(`[${type.toUpperCase()}] ${message}`);
+            
+            modalMessage.textContent = message;
+            modalButtons.innerHTML = '<button id="modalOkButtonDynamic">OK</button>';
+            document.getElementById('modalOkButtonDynamic').onclick = () => notificationModal.style.display = 'none';
+            
+            // Style based on type
+            const modalContent = notificationModal.querySelector('.modal-content');
+            if (type === "success") modalContent.style.borderColor = 'var(--accent-color)';
+            else if (type === "error") modalContent.style.borderColor = 'red';
+            else if (type === "warn") modalContent.style.borderColor = 'orange';
+            else modalContent.style.borderColor = 'var(--secondary-text-color)';
+
+            notificationModal.style.display = 'flex';
+
+            if (duration > 0) {
+                setTimeout(() => {
+                    if (modalMessage.textContent === message) { // Only hide if it's still the same message
+                         notificationModal.style.display = 'none';
+                    }
+                }, duration);
+            }
+        }
+
+        function showConfirmationModal(message, onConfirm, onCancel = null) {
+            modalMessage.textContent = message;
+            modalButtons.innerHTML = `
+                <button id="modalConfirmButton">Confirm</button>
+                <button id="modalCancelButton" class="cancel">Cancel</button>
+            `;
+            document.getElementById('modalConfirmButton').onclick = () => {
+                notificationModal.style.display = 'none';
+                onConfirm();
+            };
+            document.getElementById('modalCancelButton').onclick = () => {
+                notificationModal.style.display = 'none';
+                if (onCancel) onCancel();
+            };
+            notificationModal.style.display = 'flex';
+        }
+
+        function updateScoreDisplay() {
+            scoreDisplay.textContent = score;
+            progressScoreDisplay.textContent = score;
+        }
+
+        function populateSurahDatalist() {
+            surahNameDatalist.innerHTML = ''; // Clear existing options
+            allSurahMetadata.forEach(surah => {
+                const option = document.createElement('option');
+                option.value = surah.nameEn; // Use English name for typing
+                surahNameDatalist.appendChild(option);
+                // Could also add Arabic names if input method supports it well
+                // const optionAr = document.createElement('option');
+                // optionAr.value = surah.nameAr;
+                // surahNameDatalist.appendChild(optionAr);
+            });
+        }
+
+        // --- Game Logic ---
+        async function startGame() {
+            feedbackMessage.textContent = '';
+            nextQuestionButton.style.display = 'none';
+            hintButton.disabled = false;
+            hintsLeft = 3; // Reset hints for new question
+            hintsRemainingDisplay.textContent = hintsLeft;
+
+            currentQuestion = await generateQuestion();
+            if (!currentQuestion) {
+                clueDisplay.innerHTML = "<p>No more Surahs to guess, or an error occurred! Try resetting progress or checking data.</p>";
+                showNotification("All Surahs identified or error generating question!", "warn");
+                return;
+            }
+
+            renderQuestion(currentQuestion);
+            configureQuestionInputType();
+        }
+        
+        function configureQuestionInputType() {
+    const effectiveQuestionType = difficulty === 'hard' ? 'typein' : questionModeSelect.value;
+
+    if (effectiveQuestionType === 'typein') {
+        answerOptionsContainer.style.display = 'none';
+        guessInput.style.display = 'block';
+        submitGuessButton.style.display = 'block';
+        guessInput.value = ''; // Clear previous input
+        guessInput.focus();
+    } else { // MCQ
+        answerOptionsContainer.style.display = 'block';
+        guessInput.style.display = 'none';
+        submitGuessButton.style.display = 'none';
+    }
+}
+
+        async function generateQuestion() {
+            // Filter out already correctly identified Surahs
+            let availableSurahs = allSurahMetadata.filter(s => !correctlyIdentifiedSurahs.includes(s.id));
+
+            // Conceptual: "My Quran Journey" integration
+            // const myQuranJourneyKey = 'myQuranJourney_learningSurahs';
+            // let learningSurahs = [];
+            // try {
+            //     const storedLearning = localStorage.getItem(myQuranJourneyKey);
+            //     if (storedLearning) learningSurahs = JSON.parse(storedLearning);
+            // } catch (e) { console.warn("Could not parse My Quran Journey data"); }
+
+            // if (learningSurahs.length > 0) {
+            //     const prioritySurahs = availableSurahs.filter(s => learningSurahs.includes(s.id));
+            //     if (prioritySurahs.length > 0 && Math.random() < 0.7) { // 70% chance to pick from learning list
+            //         availableSurahs = prioritySurahs;
+            //     }
+            // }
+            
+            if (availableSurahs.length === 0) {
+                // All Surahs identified or no Surahs loaded
+                return null;
+            }
+
+            const randomSurah = availableSurahs[Math.floor(Math.random() * availableSurahs.length)];
+            const clues = [];
+            const hints = []; // Additional clues for hints
+
+            // Clue 1: Number of Ayahs
+            clues.push({ type: 'text', text: `This Surah has ${randomSurah.ayahs} Ayahs.` });
+            // Clue 2: Place of Revelation
+            clues.push({ type: 'text', text: `It was revealed in ${randomSurah.revelationPlace}.` });
+            
+            // Fetch some Ayahs for more clues/hints
+            const ayahsFromSurah = await getAyahsForSurah(randomSurah.id, 5); // Get up to 5 ayahs
+
+            if (ayahsFromSurah.length > 0) {
+                const randomAyahForClue = ayahsFromSurah[Math.floor(Math.random() * ayahsFromSurah.length)];
+                if (difficulty === 'easy') {
+                    // Easy: A very prominent Ayah (e.g., first) or its translation
+                    const firstAyah = ayahsFromSurah.find(a => a.ayah === 1) || randomAyahForClue;
+                    clues.push({ type: 'arabic', text: firstAyah.arabic, label: "An Ayah from this Surah:" });
+                    hints.push({ type: 'urdu', text: firstAyah.urdu, label: "Its Urdu translation includes:" });
+                } else if (difficulty === 'medium') {
+                    clues.push({ type: 'arabic', text: randomAyahForClue.arabic, label: "An Ayah from this Surah:" });
+                    if (ayahsFromSurah.length > 1) {
+                        let hintAyah = ayahsFromSurah.find(a => a.ayah !== randomAyahForClue.ayah) || ayahsFromSurah[0];
+                         hints.push({ type: 'urdu', text: hintAyah.urdu, label: "Another Ayah's translation:" });
+                    } else {
+                         hints.push({ type: 'text', text: `It is Surah number ${randomSurah.id} in the Quran.` });
+                    }
+                } else { // Hard
+                    // Hard: A less common Ayah snippet, or a distinctive word (placeholder for now)
+                    clues.push({ type: 'urdu', text: randomAyahForClue.urdu.substring(0, Math.min(50, randomAyahForClue.urdu.length)) + "...", label: "Part of an Ayah's translation:" });
+                    hints.push({ type: 'arabic', text: randomAyahForClue.arabic, label: "The full Arabic Ayah is:" });
+                    hints.push({ type: 'text', text: `This Surah is in Juz': ${randomSurah.juz.join(', ')}.` });
+                }
+            } else {
+                // Fallback if no ayahs found (should not happen if data.AM is processed)
+                clues.push({ type: 'text', text: `It is Surah number ${randomSurah.id} in the Quran.` });
+            }
+
+            // Add more hints from Surah metadata
+            hints.push({ type: 'text', text: `This Surah's English name starts with '${randomSurah.nameEn.charAt(0)}'.` });
+            if (randomSurah.themes && randomSurah.themes.length > 0) {
+                 hints.push({ type: 'text', text: `One of its themes is: ${randomSurah.themes[0]}.` });
+            }
+
+
+            // MCQ Options
+            const options = [randomSurah.nameEn];
+            const allOtherSurahs = allSurahMetadata.filter(s => s.id !== randomSurah.id);
+            while (options.length < 4 && allOtherSurahs.length > 0) {
+                const distractorIndex = Math.floor(Math.random() * allOtherSurahs.length);
+                options.push(allOtherSurahs.splice(distractorIndex, 1)[0].nameEn);
+            }
+            shuffleArray(options); // Shuffle options
+
+            return {
+                surah: randomSurah,
+                initialClues: clues.slice(0, difficulty === 'easy' ? 3 : 2), // Show fewer initial clues for harder levels
+                allClues: clues, // All potential primary clues
+                hintClues: hints, // Clues to be revealed by hint button
+                options: options,
+                revealedCluesCount: (difficulty === 'easy' ? 3 : 2)
+            };
+        }
+        
+        async function getAyahsForSurah(surahId, limit = 0) {
+            return new Promise((resolve, reject) => {
+                const store = getStore(AYAH_STORE);
+                if (!store) return reject("Ayah store not found");
+
+                const range = IDBKeyRange.bound([surahId, 1], [surahId, Infinity]);
+                const request = store.getAll(range);
+
+                request.onsuccess = () => {
+                    let results = request.result;
+                    if (limit > 0 && results.length > limit) {
+                        // Simple random sampling if too many results and limit is set
+                        shuffleArray(results);
+                        results = results.slice(0, limit);
+                    }
+                    resolve(results);
+                };
+                request.onerror = (event) => reject(`Error fetching ayahs for Surah ${surahId}: ${event.target.error}`);
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        function renderQuestion(question) {
+    let clueHTML = "";
+    question.initialClues.forEach(clue => {
+        if (clue.type === 'arabic') {
+            clueHTML += `<p class="arabic-clue"><strong>${clue.label || ''}</strong> ${clue.text}</p>`;
+        } else if (clue.type === 'urdu') {
+            clueHTML += `<p class="urdu-clue"><strong>${clue.label || ''}</strong> ${clue.text}</p>`;
+        } else {
+            clueHTML += `<p>${clue.text}</p>`;
+        }
+    });
+    clueDisplay.innerHTML = clueHTML;
+
+    const effectiveQuestionType = difficulty === 'hard' ? 'typein' : questionModeSelect.value;
+    if (effectiveQuestionType === 'mcq') {
+        answerOptionsContainer.innerHTML = '';
+        question.options.forEach(optionText => {
+            const button = document.createElement('button');
+            button.textContent = optionText;
+            // Find the Surah object for this option to display Arabic name too if desired
+            const optionSurah = allSurahMetadata.find(s => s.nameEn === optionText);
+            if (optionSurah) {
+                 button.innerHTML = `${optionSurah.nameEn} <span style="font-family:var(--font-arabic); font-size:1.2em; color:var(--bg-color); opacity:0.7;">(${optionSurah.nameAr})</span>`;
+            }
+            button.onclick = () => checkAnswer(optionText);
+            answerOptionsContainer.appendChild(button);
+        });
+    }
+}
+
+        function useHint() {
+            if (hintsLeft <= 0 || !currentQuestion) return;
+
+            let newHint = null;
+            // Try to reveal a hint from the pre-defined hintClues list
+            if (currentQuestion.hintClues && currentQuestion.hintClues.length > 0) {
+                newHint = currentQuestion.hintClues.shift(); // Get and remove the first available hint
+            } 
+            // If no more pre-defined hints, try to reveal one from allClues not yet shown
+            else if (currentQuestion.allClues.length > currentQuestion.revealedCluesCount) {
+                newHint = currentQuestion.allClues[currentQuestion.revealedCluesCount];
+                currentQuestion.revealedCluesCount++;
+            }
+
+
+            if (newHint) {
+                let hintHTML = "";
+                 if (newHint.type === 'arabic') {
+                    hintHTML = `<p class="arabic-clue"><strong>Hint:</strong> ${newHint.text}</p>`;
+                } else if (newHint.type === 'urdu') {
+                    hintHTML = `<p class="urdu-clue"><strong>Hint:</strong> ${newHint.text}</p>`;
+                } else {
+                    hintHTML = `<p><strong>Hint:</strong> ${newHint.text}</p>`;
+                }
+                clueDisplay.innerHTML += hintHTML;
+                hintsLeft--;
+                hintsRemainingDisplay.textContent = hintsLeft;
+                if (hintsLeft === 0) {
+                    hintButton.disabled = true;
+                }
+                score -= 1; // Penalty for hint
+                updateScoreDisplay();
+            } else {
+                showNotification("No more hints available for this question.", "info");
+                hintButton.disabled = true;
+            }
+        }
+
+        function checkAnswer(guessedName) {
+            if (!currentQuestion) return;
+
+            const correctNameEn = currentQuestion.surah.nameEn;
+            const correctNameAr = currentQuestion.surah.nameAr;
+            
+            let isCorrect = false;
+            // For type-in, be a bit flexible. Compare with English name primarily.
+            // For MCQ, it's an exact match.
+            if (guessedName.toLowerCase() === correctNameEn.toLowerCase() || guessedName === correctNameAr) {
+                 isCorrect = true;
+            }
+
+
+            if (isCorrect) {
+                feedbackMessage.textContent = `Correct! It is Surah ${correctNameEn} (${correctNameAr}).`;
+                feedbackMessage.style.color = 'var(--accent-color)';
+                score += (difficulty === 'hard' ? 15 : (difficulty === 'medium' ? 10 : 5));
+                if (!correctlyIdentifiedSurahs.includes(currentQuestion.surah.id)) {
+                    correctlyIdentifiedSurahs.push(currentQuestion.surah.id);
+                }
+            } else {
+                feedbackMessage.textContent = `Incorrect. The correct answer was Surah ${correctNameEn} (${correctNameAr}).`;
+                feedbackMessage.style.color = 'orange';
+                score -= (difficulty === 'hard' ? 5 : (difficulty === 'medium' ? 3 : 2));
+            }
+            
+            updateScoreDisplay();
+            saveUserProgress();
+            
+            // Disable further interaction with current question
+            answerOptionsContainer.querySelectorAll('button').forEach(btn => btn.disabled = true);
+            guessInput.disabled = true;
+            submitGuessButton.disabled = true;
+            hintButton.disabled = true;
+            nextQuestionButton.style.display = 'block';
+            nextQuestionButton.focus();
+        }
+
+        // --- Learn Mode ---
+        function renderLearnMode() {
+            learnSurahList.innerHTML = ''; // Clear previous list
+            learnSurahDetailView.style.display = 'none';
+            learnSurahList.style.display = 'block';
+            learnSearchInput.style.display = 'block';
+
+            const searchTerm = learnSearchInput.value.toLowerCase();
+            const filteredSurahs = allSurahMetadata.filter(s => 
+                s.nameEn.toLowerCase().includes(searchTerm) ||
+                s.nameAr.includes(searchTerm) || // Basic Arabic search
+                s.id.toString().includes(searchTerm)
+            );
+
+            if (filteredSurahs.length === 0) {
+                learnSurahList.innerHTML = '<li>No Surahs found.</li>';
+                return;
+            }
+
+            filteredSurahs.forEach(surah => {
+                const li = document.createElement('li');
+                const nameSpan = document.createElement('span');
+                nameSpan.innerHTML = `${surah.id}. ${surah.nameEn} <span class="surah-name-ar">(${surah.nameAr})</span>`;
+                li.appendChild(nameSpan);
+
+                if (correctlyIdentifiedSurahs.includes(surah.id)) {
+                    const checkmark = document.createElement('span');
+                    checkmark.textContent = '✓'; // Checkmark
+                    checkmark.className = 'correctly-identified-check';
+                    checkmark.title = 'Correctly identified in game';
+                    li.appendChild(checkmark);
+                }
+
+                li.onclick = () => showSurahDetail(surah.id);
+                learnSurahList.appendChild(li);
+            });
+        }
+
+        async function showSurahDetail(surahId) {
+            const surah = allSurahMetadata.find(s => s.id === surahId);
+            if (!surah) return;
+
+            document.getElementById('detailSurahNameEn').textContent = surah.nameEn;
+            document.getElementById('detailSurahNameAr').textContent = surah.nameAr;
+            document.getElementById('detailSurahNumber').textContent = surah.id;
+            document.getElementById('detailSurahAyahs').textContent = surah.ayahs;
+            document.getElementById('detailSurahRevelation').textContent = surah.revelationPlace;
+            document.getElementById('detailSurahJuz').textContent = surah.juz.join(', ');
+
+            const ayahsDisplay = document.getElementById('detailSurahAyahsDisplay');
+            ayahsDisplay.innerHTML = '<div class="loader"></div><p>Loading Ayahs...</p>';
+            
+            learnSurahList.style.display = 'none';
+            learnSearchInput.style.display = 'none';
+            learnSurahDetailView.style.display = 'block';
+
+            const ayahs = await getAyahsForSurah(surahId);
+            if (ayahs && ayahs.length > 0) {
+                ayahs.sort((a,b) => a.ayah - b.ayah); // Ensure ayahs are in order
+                let ayahsHTML = '';
+                ayahs.forEach(ayah => {
+                    ayahsHTML += `
+                        <div class="ayah-item">
+                            <p class="ayah-number" style="color:var(--secondary-text-color); font-size:0.9em;">Ayah ${ayah.ayah}</p>
+                            <p class="arabic-text">${ayah.arabic}</p>
+                            <p class="urdu-text">${ayah.urdu}</p>
+                        </div>
+                    `;
+                });
+                ayahsDisplay.innerHTML = ayahsHTML;
+            } else {
+                ayahsDisplay.innerHTML = '<p>No Ayah data available for this Surah. Ensure data.AM was processed correctly.</p>';
+            }
+        }
+        
+        // --- Progress View ---
+        function renderProgressView() {
+            progressScoreDisplay.textContent = score;
+            progressCorrectCount.textContent = `${correctlyIdentifiedSurahs.length} / ${allSurahMetadata.length}`;
+            
+            identifiedSurahsList.innerHTML = '';
+            if (correctlyIdentifiedSurahs.length === 0) {
+                identifiedSurahsList.innerHTML = '<li>No Surahs identified yet. Keep playing!</li>';
+                return;
+            }
+
+            const identifiedDetails = allSurahMetadata.filter(s => correctlyIdentifiedSurahs.includes(s.id));
+            identifiedDetails.sort((a,b) => a.id - b.id); // Sort by Surah number
+
+            identifiedDetails.forEach(surah => {
+                const li = document.createElement('li');
+                li.innerHTML = `${surah.id}. ${surah.nameEn} <span class="surah-name-ar">(${surah.nameAr})</span>`;
+                li.onclick = () => { // Allow quick navigation to learn mode detail
+                    navigateToView('learn');
+                    showSurahDetail(surah.id);
+                };
+                identifiedSurahsList.appendChild(li);
+            });
+        }
+
+        // --- User Progress Persistence ---
+        async function saveUserProgress() {
+            try {
+                await putToStore(USER_PROGRESS_STORE, { key: 'score', value: score });
+                await putToStore(USER_PROGRESS_STORE, { key: 'difficulty', value: difficulty });
+                await putToStore(USER_PROGRESS_STORE, { key: 'questionType', value: questionType });
+                await putToStore(USER_PROGRESS_STORE, { key: 'correctSurahs', value: correctlyIdentifiedSurahs });
+            } catch (e) {
+                console.error("Error saving user progress:", e);
+                showNotification("Could not save progress to database.", "error");
+            }
+        }
+
+        async function loadUserProgress() {
+            try {
+                const savedScore = await getFromStore(USER_PROGRESS_STORE, 'score');
+                if (savedScore) score = savedScore.value;
+
+                const savedDifficulty = await getFromStore(USER_PROGRESS_STORE, 'difficulty');
+                if (savedDifficulty) difficulty = savedDifficulty.value;
+                difficultyLevelSelect.value = difficulty;
+
+
+                const savedQuestionType = await getFromStore(USER_PROGRESS_STORE, 'questionType');
+                if (savedQuestionType) questionType = savedQuestionType.value;
+                questionModeSelect.value = questionType;
+
+                const savedCorrectSurahs = await getFromStore(USER_PROGRESS_STORE, 'correctSurahs');
+                if (savedCorrectSurahs) correctlyIdentifiedSurahs = savedCorrectSurahs.value;
+
+                updateScoreDisplay();
+            } catch (e) {
+                console.error("Error loading user progress:", e);
+                // Initialize with defaults if loading fails
+                score = 0;
+                difficulty = 'easy';
+                questionType = 'mcq';
+                correctlyIdentifiedSurahs = [];
+                updateScoreDisplay();
+                showNotification("Could not load saved progress. Starting fresh.", "warn");
+            }
+        }
+
+        function confirmResetProgress() {
+            showConfirmationModal("Are you sure you want to reset all your progress (score and identified Surahs)? This cannot be undone.",
+            async () => {
+                score = 0;
+                correctlyIdentifiedSurahs = [];
+                await saveUserProgress(); // Save the reset state
+                updateScoreDisplay();
+                renderProgressView(); // Update progress view
+                if (views.game.classList.contains('active')) startGame(); // Restart game if in game view
+                showNotification("Progress has been reset.", "success");
+            });
+        }
+
+        // --- Backup and Restore ---
+        async function backupData() {
+            try {
+                const backupObject = {};
+                backupObject.userProgress = await getAllFromStore(USER_PROGRESS_STORE);
+                backupObject.appState = await getAllFromStore(APP_STATE_STORE);
+                // Critical: Include parsed Ayah data if data.AM processing is heavy
+                // This makes backup larger but restore more robust if data.AM is not available
+                backupObject.quranAyahs = await getAllFromStore(AYAH_STORE);
+                backupObject.surahMetadata = await getAllFromStore(SURAH_METADATA_STORE); // Though this is from surahMasterData, backing it up ensures consistency if master data changes version.
+
+                const jsonString = JSON.stringify(backupObject, null, 2);
+                const blob = new Blob([jsonString], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                a.href = url;
+                a.download = `surah_challenge_backup_${timestamp}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showNotification("Data backup successful!", "success");
+            } catch (e) {
+                console.error("Backup error:", e);
+                showNotification(`Backup failed: ${e.message}`, "error");
+            }
+        }
+
+        function confirmRestoreData(file) {
+             showConfirmationModal("Restoring data will overwrite your current progress and settings. Are you sure you want to continue?",
+                () => restoreDataFromFile(file)
+            );
+        }
+
+        async function restoreDataFromFile(file) {
+            loadingOverlay.style.display = 'flex';
+            loadingMessage.textContent = "Restoring data from backup...";
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const backupObject = JSON.parse(event.target.result);
+
+                    if (!backupObject.userProgress || !backupObject.appState || !backupObject.quranAyahs || !backupObject.surahMetadata) {
+                        throw new Error("Invalid backup file format. Missing essential data stores.");
+                    }
+
+                    // Clear existing stores
+                    await clearStore(USER_PROGRESS_STORE);
+                    await clearStore(APP_STATE_STORE);
+                    await clearStore(AYAH_STORE);
+                    await clearStore(SURAH_METADATA_STORE);
+
+                    // Populate stores from backup
+                    for (const item of backupObject.userProgress) { await putToStore(USER_PROGRESS_STORE, item); }
+                    for (const item of backupObject.appState) { await putToStore(APP_STATE_STORE, item); }
+                    
+                    const ayahTransaction = db.transaction([AYAH_STORE], 'readwrite');
+                    const ayahStoreObj = ayahTransaction.objectStore(AYAH_STORE);
+                    for (const item of backupObject.quranAyahs) { ayahStoreObj.put(item); }
+                    await new Promise((resolve, reject) => {
+                        ayahTransaction.oncomplete = resolve;
+                        ayahTransaction.onerror = reject;
+                    });
+
+                    const metadataTransaction = db.transaction([SURAH_METADATA_STORE], 'readwrite');
+                    const metadataStoreObj = metadataTransaction.objectStore(SURAH_METADATA_STORE);
+                    for (const item of backupObject.surahMetadata) { metadataStoreObj.put(item); }
+                     await new Promise((resolve, reject) => {
+                        metadataTransaction.oncomplete = resolve;
+                        metadataTransaction.onerror = reject;
+                    });
+
+
+                    // Reload application state
+                    await loadUserProgress(); // Reloads score, difficulty, etc.
+                    allSurahMetadata = await getAllFromStore(SURAH_METADATA_STORE);
+                    allSurahMetadata.sort((a,b) => a.id - b.id);
+                    populateSurahDatalist();
+                    initializeUI(); // Re-init UI elements
+                    
+                    const restoredDataVersion = backupObject.appState.find(s => s.key === DATA_AM_PROCESSED_KEY);
+                    if (restoredDataVersion) {
+                        dataAmStatus.textContent = `Status: Restored data (Version ${restoredDataVersion.value}).`;
+                    } else {
+                        dataAmStatus.textContent = `Status: Restored data (Version unknown).`;
+                    }
+
+                    showNotification("Data restored successfully! Application reloaded.", "success");
+                    if (views.game.classList.contains('active')) startGame();
+                    else if (views.learn.classList.contains('active')) renderLearnMode();
+                    else if (views.progress.classList.contains('active')) renderProgressView();
+
+                } catch (e) {
+                    console.error("Restore error:", e);
+                    showNotification(`Restore failed: ${e.message}. Please ensure it's a valid backup file.`, "error");
+                } finally {
+                    restoreDataInput.value = ""; // Reset file input
+                    loadingOverlay.style.display = 'none';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- Initialization ---
+        window.onload = async () => {
+            try {
+                await openDB();
+                await checkAndLoadInitialData();
+            } catch (error) {
+                console.error("Fatal error during initialization:", error);
+                loadingOverlay.style.display = 'flex';
+                loadingMessage.textContent = `Critical Error: ${error}. The app might not work correctly. Please refresh or check console.`;
+                showNotification(`Critical Error: ${error}`, "error", 0); // Persistent error
+            }
+        };
+
+    </script>
+</body>
+</html>
